@@ -1,0 +1,17 @@
+Sprint 1: Planning & Research (Pre-Development) 
+
+1. Game Architecture & Design 
+
+- Create a game flow diagram showing screen transitions and game states. 
+- Design a basic layout for UI elements. 
+
+2. Obstacle & Car Research 
+
+- Gather reference images for obstacles and cars. 
+- Decide on different obstacle types and possible difficulties. 
+
+3. Technology & Setup 
+
+- Ensure the game frame works properly in a web environment. 
+
+Sprint Goal: A clear game structure, and reference materials for visuals, basic frame for javascript to run in.
