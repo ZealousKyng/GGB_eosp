@@ -6,27 +6,32 @@ Sprint 1: Planning & Research (Pre-Development)
 - Time Estimate: Small
 
 2. File Structure: 
-- What is it? Set up file structure in GitHub based on VS Code. Ensure proper setup with Source Control
+- What is it? Git file structure, Set up file structure in GitHub based on VS Code. Ensure proper setup with Source Control
 - Developers (>=2): 
 - Time Estimate: Medium
 
-3. Find Assets:
+3. Code for framework in browser
+- What is it? HTML for framework in browser.
+- Developers: 
+- Time Estimate: Medium
+
+4. Find Assets:
 - What is it? Gather reference images for obstacles and cars (find image inspiration)
 - Developers: 
 - Time Estimate: Small
 
-4. Technical Designs:
+5. Technical Designs:
 - What is it? Transition state diagram (MS Paint)
 - Developers: 
-- Time Estimate: Medium
+- Time Estimate: Small
 
-5. Concept Art:
-- What is it? UI design
+6. Concept Art:
+- What is it? UI design (MS Paint) how the page will look.
 - Developers: 
-- Time Estimate: 
+- Time Estimate: Small
 
-6. Research: 
-- What is it? Git file structure 
+7. Research: 
+- What is it? Researching future topics
 - Developers: 
 - Time Estimate: 
 
