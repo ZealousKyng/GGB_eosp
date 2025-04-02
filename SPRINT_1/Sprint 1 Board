@@ -1,27 +1,27 @@
 Sprint 1: Planning & Research (Pre-Development)
 
 1. File to Hold Framework:
-- What is it? 
+- What is it? Ensure the game frame work properly in web environment
 - Developers: 
 - Time Estimate: Small
 
 2. File Structure: 
-- What is it? Set up file structure in GitHub based on VS Code
+- What is it? Set up file structure in GitHub based on VS Code. Ensure proper setup with Source Control
 - Developers (>=2): 
 - Time Estimate: Medium
 
 3. Find Assets:
-- What is it? 
+- What is it? Gather reference images for obstacles and cars (find image inspiration)
 - Developers: 
-- Time Estimate: 
+- Time Estimate: Small
 
-4. Basic Designs:
-- What is it? 
+4. Technical Designs:
+- What is it? Transition state diagram (MS Paint)
 - Developers: 
-- Time Estimate: 
+- Time Estimate: Medium
 
-5. Visual Concepts:
-- What is it? 
+5. Concept Art:
+- What is it? UI design
 - Developers: 
 - Time Estimate: 
 
