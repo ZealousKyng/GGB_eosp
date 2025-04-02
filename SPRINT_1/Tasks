@@ -13,5 +13,6 @@ Sprint 1: Planning & Research (Pre-Development)
 3. Technology & Setup 
 
 - Ensure the game frame works properly in a web environment. 
+- Ensure proper setup with Source control
 
 Sprint Goal: A clear game structure, and reference materials for visuals, basic frame for javascript to run in.
