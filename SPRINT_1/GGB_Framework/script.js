@@ -17,7 +17,9 @@ const obstacleImages =
 [
   'assets/cone.png', // ~ Links to obstacle pngs
   'assets/stopSign.png',
-  'assets/warningSign.png'
+  'assets/warningSign.png',
+  'assets/grandma.png',
+  'assets/bananas.png'
 ].map(src => {
   const img = new Image();
   img.src = src;
