@@ -15,18 +15,31 @@
 
     <!-- ^ Canvas where the actual game is rendered -->
     <!--   Canvas is used for a drawing surface, better for games and animations -->
-    <canvas id="gameCanvas" width="800" height="400"></canvas>
+    <canvas id="gameCanvas" width="800" height="400">
+      
+      
+
+    </canvas>
 
     <!-- ^ Start Screen -->
     <!--  shown when the game first loads -->
+    
     <div id="startScreen">
       <div>Lane Dodge Game</div>
+      <!-- <div>
+        <img id="gameTitleImage" src="assets/laneDodgeTitle.png" alt="Lane Dodge Game">
+      </div> -->
 
       <!-- Main menu buttons: Play + Options -->
       <div id="mainButtons">
         <button id="startButton">Play</button>
         <button id="optionsButton">Options</button>
       </div>
+      
+      <img id="carImageMainMenu" src="assets/carPixel.png" alt="Car Image">
+      
+
+      
 
       <!-- ^ Options menu -->
       <!--  lets player customize obstacle speed and spawn timing -->
@@ -57,6 +70,21 @@
     </div>
 
   </div>
+
+  <!-- pause menu screen -->
+  <div id="pauseMenu">
+    <h2>Game Paused</h2>
+    <button id="resumeButton">Resume</button>
+    <button id="pauseOptionsButton">settings</button>
+    <button id="pauseRestartButton">Restart</button>
+    <button id="pauseMainMenuButton">Main Menu</button>
+  </div>
+ <!-- not implemented yet screen Aka the setting menu -->
+  <div id="notImplementedOverlay">
+    <h2>Not Implemented Yet</h2>
+    <button id="returnToPauseButton">Return to Pause Menu</button>
+  </div>
+  
 
   <!-- ~ External JavaScript logic (game code) -->
   <script src="script.js"></script>
