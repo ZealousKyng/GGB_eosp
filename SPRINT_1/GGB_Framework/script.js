@@ -3,9 +3,8 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
 // ^ Layout Constants
-const grassHeight = 30; // Height of the grass at top and bottom
-const totalRoadHeight = canvas.height - grassHeight * 2; // Road area between the grass
-const laneHeight = totalRoadHeight / 3; // Height of each of the 3 lanes
+const numberOfLanes = 5;
+const laneHeight = canvas.height / numberOfLanes;
 
 // ^ Image Assets
 // & Car image
@@ -57,11 +56,11 @@ const returnToPauseButton = document.getElementById('returnToPauseButton');
 // ^ Game State
 const car = {
   x: 50, // Horizontal position
-  y: grassHeight + laneHeight + (laneHeight - 40) / 2, // Initial vertical position
+  y: laneHeight * 2 + (laneHeight - 40) / 2, // Initial vertical position
   width: 60,
   height: 40,
-  lane: 1, // Starts in the middle lane
-  targetY: grassHeight + laneHeight + (laneHeight - 40) / 2 // For smooth lane change
+  lane: 2, // Starts in the middle lane
+  targetY: laneHeight * 2 + (laneHeight - 40) / 2 // For smooth lane change
 };
 
 let obstacles = [];           // Active obstacles on screen
@@ -85,8 +84,8 @@ function drawLanes() {
 
   //& Draw top and bottom grass
   ctx.fillStyle = '#009c41'; // Grass color (green)
-  ctx.fillRect(0, 0, canvas.width, grassHeight);
-  ctx.fillRect(0, canvas.height - grassHeight, canvas.width, grassHeight);
+  ctx.fillRect(0, 0, canvas.width, laneHeight);
+  ctx.fillRect(0, canvas.height - laneHeight, canvas.width, laneHeight);
 
   //& Dashed horizontal lane dividers
   ctx.strokeStyle = '#aaa'; // Divider color (Light Grey)
@@ -95,10 +94,10 @@ function drawLanes() {
   ctx.lineDashOffset = laneDashOffset;
 
   //& This loop draws those 2 dashed lines between the lanes.
-  for (let i = 1; i < 3; i++) {
+  for (let i = 2; i <= 3; i++) {
 
     // Calculate the Y position for the current lane divider
-    const y = grassHeight + i * laneHeight;
+    const y = laneHeight * i;
 
     // Begin a new drawing path for the dashed divider line
     ctx.beginPath();
@@ -153,11 +152,11 @@ function updateObstacles() {
 function spawnObstacle() {
 
     //& Randomly choose one of the 3 lanes: 0, 1, or 2
-    const lane = Math.floor(Math.random() * 3);
+    const lane = Math.floor(Math.random() * 3) + 1; // Only middle 3 lanes
   
     //& Calculate the vertical (Y) position based on the selected lane
     //  This places the obstacle centered vertically inside its lane
-    const y = grassHeight + lane * laneHeight + (laneHeight - 40) / 2;
+    const y = lane * laneHeight + (laneHeight - 40) / 2;
     // Turning this is into a varible saves a huge headarche later
     const ImageRNG = Math.floor(Math.random() * obstacleImages.length);
 
@@ -165,7 +164,7 @@ function spawnObstacle() {
     const randomImage = obstacleImages[ImageRNG];
 
     //& Based on the random image alters hitbox of the obstacle into three tiers for easier updates, a default 60 in case of failure.
-    var Size = "Large";
+    let Size = "Large";
   
     // changes the hitbox depending on the obstacles image, number in the array, split into "Medimum","Small", and "Large" as the default
     //& the problem with this system is if we add more obstacles we will need to update this list else it will be considered "Large"
@@ -290,13 +289,13 @@ document.addEventListener('keydown', e => {
     e.preventDefault(); // Prevent default browser behavior
   } 
   // Move down with S or Down Arrow
-  else if ((e.key === 's' || e.key === 'S' || e.key === 'ArrowDown') && car.lane < 2) {
+  else if ((e.key === 's' || e.key === 'S' || e.key === 'ArrowDown') && car.lane < numberOfLanes - 1) {
     car.lane++;
     e.preventDefault(); // Prevent default browser behavior
   }
   
   // Calculate new target Y position for smooth animation
-  car.targetY = grassHeight + car.lane * laneHeight + (laneHeight - 40) / 2;
+  car.targetY = laneHeight * car.lane + (laneHeight - 40) / 2;
 });
 
 // ! UI Button Event Listeners
@@ -335,8 +334,8 @@ applyOptionsButton.addEventListener('click', () => {
 restartButton.addEventListener('click', () => {
   // Reset everything
   obstacles = [];
-  car.lane = 1;
-  car.y = grassHeight + laneHeight + (laneHeight - 40) / 2;
+  car.lane = 2;
+  car.y = laneHeight * 2 + (laneHeight - 40) / 2;
   car.targetY = car.y;
 
   gameOverScreen.style.display = 'none';
@@ -350,8 +349,8 @@ restartButton.addEventListener('click', () => {
 mainMenuButton.addEventListener('click', () => {
   // Resets everything
   obstacles = [];
-  car.lane = 1;
-  car.y = grassHeight + laneHeight + (laneHeight - 40) / 2;
+  car.lane = 2;
+  car.y = laneHeight * 2 + (laneHeight - 40) / 2;
   car.targetY = car.y;
 
   gameOverScreen.style.display = 'none';
@@ -382,8 +381,8 @@ resumeButton.addEventListener('click', resumeGame);
 pauseMainMenuButton.addEventListener('click', () => {
   // Reset game state
   obstacles = [];
-  car.lane = 1;
-  car.y = grassHeight + laneHeight + (laneHeight - 40) / 2;
+  car.lane = 2;
+  car.y = laneHeight * 2 + (laneHeight - 40) / 2;
   car.targetY = car.y;
   gamePaused = false;
   gameRunning = false;
@@ -396,8 +395,8 @@ pauseMainMenuButton.addEventListener('click', () => {
 pauseRestartButton.addEventListener('click', () => {
   // Reset game state
   obstacles = [];
-  car.lane = 1;
-  car.y = grassHeight + laneHeight + (laneHeight - 40) / 2;
+  car.lane = 2;
+  car.y = laneHeight * 2 + (laneHeight - 40) / 2;
   car.targetY = car.y;
   
   // Hide pause menu
