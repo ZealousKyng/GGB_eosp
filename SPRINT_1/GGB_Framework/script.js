@@ -158,10 +158,25 @@ function spawnObstacle() {
     //& Calculate the vertical (Y) position based on the selected lane
     //  This places the obstacle centered vertically inside its lane
     const y = grassHeight + lane * laneHeight + (laneHeight - 40) / 2;
+    // Turning this is into a varible saves a huge headarche later
+    const ImageRNG = Math.floor(Math.random() * obstacleImages.length);
+
+    //& Select a random image from the obstacleImages array (cone, stop sign, warning sign, grandma, bananas)
+    const randomImage = obstacleImages[ImageRNG];
+
+    //& Based on the random image alters hitbox of the obstacle into three tiers for easier updates, a default 60 in case of failure.
+    var Size = "Large";
   
-    //& Select a random image from the obstacleImages array (cone, stop sign, warning sign)
-    const randomImage = obstacleImages[Math.floor(Math.random() * obstacleImages.length)];
-  
+    // changes the hitbox depending on the obstacles image, number in the array, split into "Medimum","Small", and "Large" as the default
+    //& the problem with this system is if we add more obstacles we will need to update this list else it will be considered "Large"
+    if (ImageRNG === 0) {
+        Size = "Medimum";
+    } else if (ImageRNG === 1 || ImageRNG === 2) {
+        Size = "Small";
+    } else {
+        Size = "Large";
+    }
+    // *I would have loved to simply compare the randomised image to one of the images in the array, but doing so is painful so this was the more elegent option* (Editors note by Alex Burns)
     //& Create a new obstacle object and add it to the obstacles array
     // Starts just off the right side of the canvas, ready to move left
     obstacles.push({
@@ -169,7 +184,8 @@ function spawnObstacle() {
       y: y,            // The lane's Y position
       width: 60,       // Width of the obstacle (same as car)
       height: 40,      // Height of the obstacle (same as car)
-      image: randomImage // One of the 3 obstacle images
+      image: randomImage, // One of the 5 obstacle images
+      size: Size    //Determines the size of the obstacles hitbox
     });
   
     // & Schedule the next obstacle spawn using a random delay between min and max
@@ -180,19 +196,46 @@ function spawnObstacle() {
 
 // ^ Detects collisions between the car and obstacles
 function checkCollision() {
-  for (let obs of obstacles) {
-    if (
-      car.x < obs.x + obs.width &&
-      car.x + car.width > obs.x &&
-      car.y < obs.y + obs.height &&
-      car.y + car.height > obs.y
-    ) {
-      //  Collision happened — stop game and show Game Over screen
-      gameRunning = false;
-      clearTimeout(obstacleTimer);
-      gameOverScreen.style.display = 'flex';
+    for (let obs of obstacles) {
+        if (obs.size == "Large") {
+            if (
+                car.x < obs.x + obs.width &&
+                car.x + car.width > obs.x &&
+                car.y < obs.y + obs.height &&
+                car.y + car.height > obs.y
+            ) {
+              //  Collision happened — stop game and show Game Over screen
+              gameRunning = false;
+              clearTimeout(obstacleTimer);
+              gameOverScreen.style.display = 'flex';
+            }
+            
+        } else if (obs.size == "Medimum") {
+            if (
+                car.x < obs.x + obs.width &&
+                car.x + car.width -15 > obs.x &&
+                car.y < obs.y + obs.height &&
+                car.y + car.height > obs.y
+            ) {
+              //  Collision happened — stop game and show Game Over screen
+              gameRunning = false;
+              clearTimeout(obstacleTimer);
+              gameOverScreen.style.display = 'flex';
+            }
+        } else if (obs.size == "Small") {
+            if (
+                car.x < obs.x + obs.width &&
+                car.x + car.width -25 > obs.x &&
+                car.y < obs.y + obs.height &&
+                car.y + car.height > obs.y
+            ) {
+              //  Collision happened — stop game and show Game Over screen
+              gameRunning = false;
+              clearTimeout(obstacleTimer);
+              gameOverScreen.style.display = 'flex';
+            }
+        }
     }
-  }
 }
 
 // ^ Main Game Loop
