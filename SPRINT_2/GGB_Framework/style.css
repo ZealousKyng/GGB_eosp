@@ -40,7 +40,8 @@ body {
     border-radius: 12px;
   }
   
-  #mainButtons {
+  #mainButtons,
+  #difficultyMenu {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -48,6 +49,7 @@ body {
   }
   
   #startButton,
+  #difficultyButton,
   #optionsButton,
   #applyOptionsButton {
     margin-top: 20px;
