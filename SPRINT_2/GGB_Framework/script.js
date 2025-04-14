@@ -40,6 +40,20 @@ const gameOverScreen = document.getElementById('gameOverScreen');
 const restartButton = document.getElementById('restartButton');
 const mainMenuButton = document.getElementById('mainMenuButton');
 
+const pauseMenu = document.getElementById('pauseMenu');
+const resumeButton = document.getElementById('resumeButton');
+const pauseOptionsButton = document.getElementById('pauseOptionsButton');
+const pauseMainMenuButton = document.getElementById('pauseMainMenuButton');
+const pauseRestartButton = document.getElementById('pauseRestartButton');
+
+const pauseTip = document.createElement('div');
+pauseTip.className = 'pause-tip';
+pauseTip.textContent = 'Press ESC to pause the game';
+document.getElementById('gameContainer').appendChild(pauseTip);
+
+const notImplementedOverlay = document.getElementById('notImplementedOverlay');
+const returnToPauseButton = document.getElementById('returnToPauseButton');
+
 // ^ Game State
 const car = {
   x: 50, // Horizontal position
@@ -53,8 +67,9 @@ const car = {
 let obstacles = [];           // Active obstacles on screen
 let gameRunning = false;      // Whether the game is currently running
 let obstacleTimer;            // Timer for obstacle spawning
+let gamePaused = false;         // Whether the game is currently paused
+let inPauseSettings = false; // Whether the game is in pause settings menu
 
-// ^ Configurable Options
 let obstacleSpeed = 5;        // Speed of obstacles
 let spawnDelayMin = 800;      // Minimum time between spawns
 let spawnDelayMax = 2000;     // Maximum time between spawns
@@ -143,10 +158,25 @@ function spawnObstacle() {
     //& Calculate the vertical (Y) position based on the selected lane
     //  This places the obstacle centered vertically inside its lane
     const y = grassHeight + lane * laneHeight + (laneHeight - 40) / 2;
+    // Turning this is into a varible saves a huge headarche later
+    const ImageRNG = Math.floor(Math.random() * obstacleImages.length);
+
+    //& Select a random image from the obstacleImages array (cone, stop sign, warning sign, grandma, bananas)
+    const randomImage = obstacleImages[ImageRNG];
+
+    //& Based on the random image alters hitbox of the obstacle into three tiers for easier updates, a default 60 in case of failure.
+    var Size = "Large";
   
-    //& Select a random image from the obstacleImages array (cone, stop sign, warning sign)
-    const randomImage = obstacleImages[Math.floor(Math.random() * obstacleImages.length)];
-  
+    // changes the hitbox depending on the obstacles image, number in the array, split into "Medimum","Small", and "Large" as the default
+    //& the problem with this system is if we add more obstacles we will need to update this list else it will be considered "Large"
+    if (ImageRNG === 0) {
+        Size = "Medimum";
+    } else if (ImageRNG === 1 || ImageRNG === 2) {
+        Size = "Small";
+    } else {
+        Size = "Large";
+    }
+    // *I would have loved to simply compare the randomised image to one of the images in the array, but doing so is painful so this was the more elegent option* (Editors note by Alex Burns)
     //& Create a new obstacle object and add it to the obstacles array
     // Starts just off the right side of the canvas, ready to move left
     obstacles.push({
@@ -154,7 +184,8 @@ function spawnObstacle() {
       y: y,            // The lane's Y position
       width: 60,       // Width of the obstacle (same as car)
       height: 40,      // Height of the obstacle (same as car)
-      image: randomImage // One of the 3 obstacle images
+      image: randomImage, // One of the 5 obstacle images
+      size: Size    //Determines the size of the obstacles hitbox
     });
   
     // & Schedule the next obstacle spawn using a random delay between min and max
@@ -165,27 +196,56 @@ function spawnObstacle() {
 
 // ^ Detects collisions between the car and obstacles
 function checkCollision() {
-  for (let obs of obstacles) {
-    if (
-      car.x < obs.x + obs.width &&
-      car.x + car.width > obs.x &&
-      car.y < obs.y + obs.height &&
-      car.y + car.height > obs.y
-    ) {
-      //  Collision happened — stop game and show Game Over screen
-      gameRunning = false;
-      clearTimeout(obstacleTimer);
-      gameOverScreen.style.display = 'flex';
+    for (let obs of obstacles) {
+        if (obs.size == "Large") {
+            if (
+                car.x < obs.x + obs.width &&
+                car.x + car.width > obs.x &&
+                car.y < obs.y + obs.height &&
+                car.y + car.height > obs.y
+            ) {
+              //  Collision happened — stop game and show Game Over screen
+              gameRunning = false;
+              clearTimeout(obstacleTimer);
+              gameOverScreen.style.display = 'flex';
+            }
+            
+        } else if (obs.size == "Medimum") {
+            if (
+                car.x < obs.x + obs.width &&
+                car.x + car.width -15 > obs.x &&
+                car.y < obs.y + obs.height &&
+                car.y + car.height > obs.y
+            ) {
+              //  Collision happened — stop game and show Game Over screen
+              gameRunning = false;
+              clearTimeout(obstacleTimer);
+              gameOverScreen.style.display = 'flex';
+            }
+        } else if (obs.size == "Small") {
+            if (
+                car.x < obs.x + obs.width &&
+                car.x + car.width -25 > obs.x &&
+                car.y < obs.y + obs.height &&
+                car.y + car.height > obs.y
+            ) {
+              //  Collision happened — stop game and show Game Over screen
+              gameRunning = false;
+              clearTimeout(obstacleTimer);
+              gameOverScreen.style.display = 'flex';
+            }
+        }
     }
-  }
 }
 
 // ^ Main Game Loop
 function gameLoop() {
   if (!gameRunning) return;
-
+  if (gamePaused) return;
   // Move the lane dividers for road movement effect
   laneDashOffset += obstacleSpeed;
+
+
 
   // Smooth car movement between lanes
   const smoothing = 0.1;
@@ -204,16 +264,38 @@ function gameLoop() {
 
 // ! Input Handling --------------------------------------------
 
-// ^ Handle W/S key presses for lane switching
-document.addEventListener('keydown', e => {
-  if (!gameRunning) return;
-  if (e.key === 'w' && car.lane > 0) {
-    car.lane--;
-  } else if (e.key === 's' && car.lane < 2) {
-    car.lane++;
-  }
+// ^ Handle W/S key presses for lane switching and pauseing game 
 
-  // Set the new vertical target based on the lane
+// Enhanced keyboard input handler with support for both WASD and arrow keys
+document.addEventListener('keydown', e => {
+  // Handle pause/resume with Escape key
+  if (e.key === 'Escape' && gameRunning) {
+    if (inPauseSettings) {
+      return; // Ignore Escape key press
+    }
+    if (gamePaused) { // Resume the game
+      resumeGame();
+    } else { // Pause the game
+      pauseGame();
+    }
+    return; // Prevent default behavior
+  }
+  
+  // Don't process movement input if game isn't running or is paused
+  if (!gameRunning || gamePaused) return;
+  
+  // Move up with W or Up Arrow
+  if ((e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') && car.lane > 0) {
+    car.lane--;
+    e.preventDefault(); // Prevent default browser behavior
+  } 
+  // Move down with S or Down Arrow
+  else if ((e.key === 's' || e.key === 'S' || e.key === 'ArrowDown') && car.lane < 2) {
+    car.lane++;
+    e.preventDefault(); // Prevent default browser behavior
+  }
+  
+  // Calculate new target Y position for smooth animation
   car.targetY = grassHeight + car.lane * laneHeight + (laneHeight - 40) / 2;
 });
 
@@ -240,7 +322,13 @@ applyOptionsButton.addEventListener('click', () => {
   spawnDelayMax = parseInt(spawnMaxInput.value);
 
   optionsMenu.style.display = 'none';
-  mainButtons.style.display = 'flex';
+  
+  if (gamePaused) {
+    pauseMenu.style.display = 'flex';
+  } else {
+    mainButtons.style.display = 'flex';
+  }
+  
 });
 
 // ^ Restart the game from the Game Over screen
@@ -268,6 +356,74 @@ mainMenuButton.addEventListener('click', () => {
 
   gameOverScreen.style.display = 'none';
   startScreen.style.display = 'flex';
+});
+
+function pauseGame() {
+  if (!gameRunning || gamePaused) return;
+  
+  gamePaused = true;
+  clearTimeout(obstacleTimer); // Stop spawning obstacles
+  pauseMenu.style.display = 'flex';
+}
+// ^ Resume the game from the pause menu
+function resumeGame() {
+  if (!gamePaused) return;
+  
+  pauseMenu.style.display = 'none';
+  gamePaused = false;
+  spawnObstacle(); // Restart obstacle spawning
+  requestAnimationFrame(gameLoop); // Restart the game loop
+}
+
+
+// Add pause menu button event listeners
+resumeButton.addEventListener('click', resumeGame);
+
+pauseMainMenuButton.addEventListener('click', () => {
+  // Reset game state
+  obstacles = [];
+  car.lane = 1;
+  car.y = grassHeight + laneHeight + (laneHeight - 40) / 2;
+  car.targetY = car.y;
+  gamePaused = false;
+  gameRunning = false;
+  
+  pauseMenu.style.display = 'none';
+  startScreen.style.display = 'flex';
+});
+
+//  event listener for restart button in pause menu
+pauseRestartButton.addEventListener('click', () => {
+  // Reset game state
+  obstacles = [];
+  car.lane = 1;
+  car.y = grassHeight + laneHeight + (laneHeight - 40) / 2;
+  car.targetY = car.y;
+  
+  // Hide pause menu
+  pauseMenu.style.display = 'none';
+  
+  // Reset pause state
+  gamePaused = false;
+  
+  // Start game fresh
+  gameRunning = true;
+  spawnObstacle();
+  gameLoop();
+});
+
+// ^ Not implemented overlay button event listener this is just a placeholder for now and is for the settings menu
+pauseOptionsButton.addEventListener('click', () => {
+  pauseMenu.style.display = 'none';
+  notImplementedOverlay.style.display = 'flex';
+  inPauseSettings = true; // Set the flag to indicate we're in pause settings
+});
+
+// Add click event for return to pause menu button
+returnToPauseButton.addEventListener('click', () => {
+  notImplementedOverlay.style.display = 'none';
+  pauseMenu.style.display = 'flex';
+  inPauseSettings = false; // Clear the flag when returning to pause menu
 });
 
 // ! Initial Draws (for when the page loads)
