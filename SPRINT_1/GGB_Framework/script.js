@@ -45,6 +45,8 @@ const pauseOptionsButton = document.getElementById('pauseOptionsButton');
 const pauseMainMenuButton = document.getElementById('pauseMainMenuButton');
 const pauseRestartButton = document.getElementById('pauseRestartButton');
 
+const timerDisplay = document.getElementById('timerDisplay');
+
 const pauseTip = document.createElement('div');
 pauseTip.className = 'pause-tip';
 pauseTip.textContent = 'Press ESC to pause the game';
@@ -73,6 +75,9 @@ let obstacleSpeed = 5;        // Speed of obstacles
 let spawnDelayMin = 800;      // Minimum time between spawns
 let spawnDelayMax = 2000;     // Maximum time between spawns
 let laneDashOffset = 0;       // Used to animate lane lines
+
+let timerInterval; //Timer for game timer
+let timeLeft = 99; //Time left in the game from start
 
 
 // ! Drawing Functions -----------------------------------------------
@@ -236,6 +241,62 @@ function checkCollision() {
         }
     }
 }
+
+// ! Main Game Timer Functions
+
+//Updates the timer displayed
+function timerDisplayUpdate() {
+  timerDisplay.textContent = `Time Left: ${timeLeft}`;
+}
+
+//Function to use to end the game when time runs out.
+function endGameForTimer() {
+  gameRunning = false;
+  clearTimeout(obstacleTimer);
+  clearInterval(timerInterval); 
+  gameOverScreen.style.display = 'flex';
+}
+
+//Function to start the timer.
+function startTimer() 
+{
+  timerInterval = setInterval(() => 
+  {
+    if (!gamePaused && timeLeft > 0) 
+      {  
+      timeLeft--;
+      timerDisplayUpdate();
+      if (timeLeft <= 0) 
+      {
+        endGameForTimer(); //If games timer is 0, end game.
+      }
+    }
+  }, 1000); //Update every 1000ms (1 second)
+}
+
+//Deducts time when an obstacle is hit. Parameter is the amount of time in seconds you want deducted.
+function deductTime(deduction) 
+{
+  timeLeft -= deduction;
+  if (timeLeft < 0) //No negatime time allowed.
+  {
+    timeLeft = 0;
+  }
+  timerDisplayUpdate();
+}
+
+//Pauses the timer upon being called
+function pauseTimer() 
+{
+  clearInterval(timerInterval); // Stop the timer
+}
+
+//Resume the timer after unpausing the game
+function resumeTimer() 
+{
+  startTimer(); // Restart the timer
+}
+
 
 // ^ Main Game Loop
 function gameLoop() {
