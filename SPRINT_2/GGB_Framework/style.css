@@ -1,0 +1,272 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    background-color: #353535;
+    font-family: sans-serif;
+  }
+  
+  #gameContainer {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    background: #1b1b1b;
+  }
+  
+  #gameCanvas {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #424242;
+    border: 4px solid #fff;
+    border-radius: 12px;
+    visibility: visible !important;
+    display: block !important;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+  }
+
+#startScreen {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 800px;
+  height: 400px;
+  transform: translate(-50%, -50%);
+  background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  color: white;
+  font-size: 2rem;
+  z-index: 10;
+  border-radius: 12px;
+  position: relative;
+}
+
+#startScreen::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: black;
+  opacity: 0.85;
+  z-index: -1;
+  border-radius: 12px;
+}
+
+#gameTitleImage {
+  width: 400px;         /* 50% of the 800px menu width for proper scale */
+  height: auto;         /* Maintains the correct aspect ratio */
+  margin-bottom: 30px;  /* Creates space between title and buttons */
+  display: block;       /* Ensures proper centering */
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3)); /* Optional: adds subtle glow */
+}
+
+#mainButtons,
+#difficultyMenu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+  
+  #startButton,
+  #difficultyButton,
+  #optionsButton,
+  #applyOptionsButton {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    background: #fff;
+    color: #333;
+    border: none;
+    border-radius: 10px;
+  }
+  
+  #optionsMenu {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: white;
+    max-height: 200px;
+    overflow-y: auto;
+    width: 90%;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 10px;
+    border-radius: 8px;
+  }
+  
+  #optionsMenu label {
+    margin: 8px 0 4px;
+    font-size: 0.85rem;
+    text-align: center;
+  }
+  
+  #optionsMenu input {
+    width: 70px;
+    padding: 4px;
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+    border-radius: 5px;
+    border: none;
+    text-align: center;
+  }
+  
+  #applyOptionsButton {
+    margin-top: 10px;
+    padding: 6px 14px;
+    font-size: 0.95rem;
+  }
+
+  #gameOverScreen {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 800px;
+    height: 400px;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.85);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: white;
+    font-size: 2rem;
+    z-index: 10;
+    border-radius: 12px;
+  }
+  
+  #gameOverScreen button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    background: #fff;
+    color: #333;
+    border: none;
+    border-radius: 10px;
+  }
+
+  #gameOverScreen button + button {
+    margin-top: 10px; /* slightly smaller gap under the first button */
+  }
+  
+  #pauseMenu {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 800px;
+    height: 400px;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.85);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: white;
+    font-size: 2rem;
+    z-index: 10;
+    border-radius: 12px;
+  }
+  
+  #pauseMenu button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    background: #fff;
+    color: #333;
+    border: none;
+    border-radius: 10px;
+  }
+  
+  #pauseMenu button + button {
+    margin-top: 10px;
+  }
+  
+  .pause-tip {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 14px;
+    opacity: 0.7;
+  }
+
+  #timerDisplay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(290px, -180px);
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    padding: 10px 15px;
+    border-radius: 8px;
+    z-index: 5;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+  }
+
+  #notImplementedOverlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 800px;
+    height: 400px;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.85);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: white;
+    font-size: 2rem;
+    z-index: 11; /* Higher than pause menu to appear on top */
+    border-radius: 12px;
+  }
+  
+  #notImplementedOverlay button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    background: #fff;
+    color: #333;
+    border: none;
+    border-radius: 10px;
+  }
+  
+  #notImplementedOverlay h2 {
+    margin-bottom: 30px;
+  }
+  
+  button:hover {
+    transform: scale(1.1); /* Makes the button "pop out" by growing 10% */
+    background-color: #FFC72C !important; /* Golden yellow color */
+    cursor: pointer;
+  }
+  #carImageMainMenu {
+    position: absolute;
+    bottom: 40px;
+    left: 40px;
+    width: 60px; 
+    height: 40px;
+    z-index: 11; /* Higher than the start screen's z-index of 10 */
+  }
+  
+  
+  
+  
+  
+  
+
+  
