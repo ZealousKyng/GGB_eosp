@@ -26,6 +26,7 @@ body {
     image-rendering: crisp-edges;
   }
 
+#startScreen {
   position: absolute;
   top: 50%;
   left: 50%;
