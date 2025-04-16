@@ -3,9 +3,8 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
 // ^ Layout Constants
-const grassHeight = 30; // Height of the grass at top and bottom
-const totalRoadHeight = canvas.height - grassHeight * 2; // Road area between the grass
-const laneHeight = totalRoadHeight / 3; // Height of each of the 3 lanes
+const numberOfLanes = 5;
+const laneHeight = canvas.height / numberOfLanes;
 
 // ^ Image Assets
 // & Car image
@@ -26,6 +25,9 @@ const obstacleImages =
   return img;
 });
 
+//Timer Constant Default Data
+const defaultTimer = 99;
+
 // ^ UI Element References
 const startScreen = document.getElementById('startScreen');
 const startButton = document.getElementById('startButton');
@@ -45,25 +47,45 @@ const easyButton = document.getElementById('easyButton');
 const mediumButton = document.getElementById('mediumButton');
 const hardButton = document.getElementById('hardButton');
 
+const pauseMenu = document.getElementById('pauseMenu');
+const resumeButton = document.getElementById('resumeButton');
+const pauseOptionsButton = document.getElementById('pauseOptionsButton');
+const pauseMainMenuButton = document.getElementById('pauseMainMenuButton');
+const pauseRestartButton = document.getElementById('pauseRestartButton');
+
+const timerDisplay = document.getElementById('timerDisplay');
+
+const pauseTip = document.createElement('div');
+pauseTip.className = 'pause-tip';
+pauseTip.textContent = 'Press ESC to pause the game';
+document.getElementById('gameContainer').appendChild(pauseTip);
+
+const notImplementedOverlay = document.getElementById('notImplementedOverlay');
+const returnToPauseButton = document.getElementById('returnToPauseButton');
+
 // ^ Game State
 const car = {
   x: 50, // Horizontal position
-  y: grassHeight + laneHeight + (laneHeight - 40) / 2, // Initial vertical position
+  y: laneHeight * 2 + (laneHeight - 40) / 2, // Initial vertical position
   width: 60,
   height: 40,
-  lane: 1, // Starts in the middle lane
-  targetY: grassHeight + laneHeight + (laneHeight - 40) / 2 // For smooth lane change
+  lane: 2, // Starts in the middle lane
+  targetY: laneHeight * 2 + (laneHeight - 40) / 2 // For smooth lane change
 };
 
 let obstacles = [];           // Active obstacles on screen
 let gameRunning = false;      // Whether the game is currently running
 let obstacleTimer;            // Timer for obstacle spawning
+let gamePaused = false;         // Whether the game is currently paused
+let inPauseSettings = false; // Whether the game is in pause settings menu
 
-// ^ Configurable Options
 let obstacleSpeed = 5;        // Speed of obstacles
 let spawnDelayMin = 800;      // Minimum time between spawns
 let spawnDelayMax = 2000;     // Maximum time between spawns
 let laneDashOffset = 0;       // Used to animate lane lines
+
+let timerInterval; //Timer for game timer
+let timeLeft = defaultTimer; //Time left in the game from start
 
 
 // ! Drawing Functions -----------------------------------------------
@@ -75,8 +97,8 @@ function drawLanes() {
 
   //& Draw top and bottom grass
   ctx.fillStyle = '#009c41'; // Grass color (green)
-  ctx.fillRect(0, 0, canvas.width, grassHeight);
-  ctx.fillRect(0, canvas.height - grassHeight, canvas.width, grassHeight);
+  ctx.fillRect(0, 0, canvas.width, laneHeight);
+  ctx.fillRect(0, canvas.height - laneHeight, canvas.width, laneHeight);
 
   //& Dashed horizontal lane dividers
   ctx.strokeStyle = '#aaa'; // Divider color (Light Grey)
@@ -85,10 +107,10 @@ function drawLanes() {
   ctx.lineDashOffset = laneDashOffset;
 
   //& This loop draws those 2 dashed lines between the lanes.
-  for (let i = 1; i < 3; i++) {
+  for (let i = 2; i <= 3; i++) {
 
     // Calculate the Y position for the current lane divider
-    const y = grassHeight + i * laneHeight;
+    const y = laneHeight * i;
 
     // Begin a new drawing path for the dashed divider line
     ctx.beginPath();
@@ -143,15 +165,30 @@ function updateObstacles() {
 function spawnObstacle() {
 
     //& Randomly choose one of the 3 lanes: 0, 1, or 2
-    const lane = Math.floor(Math.random() * 3);
+    const lane = Math.floor(Math.random() * 3) + 1; // Only middle 3 lanes
   
     //& Calculate the vertical (Y) position based on the selected lane
     //  This places the obstacle centered vertically inside its lane
-    const y = grassHeight + lane * laneHeight + (laneHeight - 40) / 2;
+    const y = lane * laneHeight + (laneHeight - 40) / 2;
+    // Turning this is into a varible saves a huge headarche later
+    const ImageRNG = Math.floor(Math.random() * obstacleImages.length);
+
+    //& Select a random image from the obstacleImages array (cone, stop sign, warning sign, grandma, bananas)
+    const randomImage = obstacleImages[ImageRNG];
+
+    //& Based on the random image alters hitbox of the obstacle into three tiers for easier updates, a default 60 in case of failure.
+    let Size = "Large";
   
-    //& Select a random image from the obstacleImages array (cone, stop sign, warning sign)
-    const randomImage = obstacleImages[Math.floor(Math.random() * obstacleImages.length)];
-  
+    // changes the hitbox depending on the obstacles image, number in the array, split into "Medimum","Small", and "Large" as the default
+    //& the problem with this system is if we add more obstacles we will need to update this list else it will be considered "Large"
+    if (ImageRNG === 0) {
+        Size = "Medimum";
+    } else if (ImageRNG === 1 || ImageRNG === 2) {
+        Size = "Small";
+    } else {
+        Size = "Large";
+    }
+    // *I would have loved to simply compare the randomised image to one of the images in the array, but doing so is painful so this was the more elegent option* (Editors note by Alex Burns)
     //& Create a new obstacle object and add it to the obstacles array
     // Starts just off the right side of the canvas, ready to move left
     obstacles.push({
@@ -159,7 +196,8 @@ function spawnObstacle() {
       y: y,            // The lane's Y position
       width: 60,       // Width of the obstacle (same as car)
       height: 40,      // Height of the obstacle (same as car)
-      image: randomImage // One of the 3 obstacle images
+      image: randomImage, // One of the 5 obstacle images
+      size: Size    //Determines the size of the obstacles hitbox
     });
   
     // & Schedule the next obstacle spawn using a random delay between min and max
@@ -170,27 +208,114 @@ function spawnObstacle() {
 
 // ^ Detects collisions between the car and obstacles
 function checkCollision() {
-  for (let obs of obstacles) {
-    if (
-      car.x < obs.x + obs.width &&
-      car.x + car.width > obs.x &&
-      car.y < obs.y + obs.height &&
-      car.y + car.height > obs.y
-    ) {
-      //  Collision happened — stop game and show Game Over screen
-      gameRunning = false;
-      clearTimeout(obstacleTimer);
-      gameOverScreen.style.display = 'flex';
+    for (let obs of obstacles) {
+        let collision = false;
+        
+        if (obs.size == "Large") {
+            if (
+                car.x < obs.x + obs.width &&
+                car.x + car.width > obs.x &&
+                car.y < obs.y + obs.height &&
+                car.y + car.height > obs.y
+            ) {
+                collision = true;
+                deductTime(6); // 6 second deduction
+            }
+            
+        } else if (obs.size == "Medimum") {
+            if (
+                car.x < obs.x + obs.width &&
+                car.x + car.width -15 > obs.x &&
+                car.y < obs.y + obs.height &&
+                car.y + car.height > obs.y
+            ) {
+                collision = true;
+                deductTime(4); // 4 second deduction
+            }
+        } else if (obs.size == "Small") {
+            if (
+                car.x < obs.x + obs.width &&
+                car.x + car.width -25 > obs.x &&
+                car.y < obs.y + obs.height &&
+                car.y + car.height > obs.y
+            ) {
+                collision = true;
+                deductTime(2); // 2 second deduction
+            }
+        }
+        
+        // Remove object if collision occurs.
+        if (collision) {
+            obstacles = obstacles.filter(o => o !== obs);
+        }
     }
+}
+
+// ! Main Game Timer Functions
+
+//Updates the timer displayed
+function timerDisplayUpdate() {
+  timerDisplay.textContent = `${timeLeft}`;
+  if (timeLeft <= 0) {
+    endGameForTimer();
   }
 }
+
+//Function to use to end the game when time runs out.
+function endGameForTimer() {
+  if (!gameRunning) return; // Prevent multiple calls
+  gameRunning = false;
+  gamePaused = false;
+  clearTimeout(obstacleTimer);
+  clearInterval(timerInterval); 
+  gameOverScreen.style.display = 'flex';
+}
+
+//Function to start the timer.
+function startTimer() 
+{
+  timerInterval = setInterval(() => 
+  {
+    if (!gamePaused && timeLeft > 0) 
+    {  
+      timeLeft--;
+      timerDisplayUpdate();
+    }
+  }, 1000); //Update every 1000ms (1 second)
+}
+
+//Deducts time when an obstacle is hit. Parameter is the amount of time in seconds you want deducted.
+function deductTime(deduction) 
+{
+  timeLeft -= deduction;
+  if (timeLeft <= 0) //No negative time allowed.
+  {
+    timeLeft = 0;
+  }
+  timerDisplayUpdate();
+}
+
+//Pauses the timer upon being called
+function pauseTimer() 
+{
+  clearInterval(timerInterval); // Stop the timer
+}
+
+//Resume the timer after unpausing the game
+function resumeTimer() 
+{
+  startTimer(); // Restart the timer
+}
+
 
 // ^ Main Game Loop
 function gameLoop() {
   if (!gameRunning) return;
-
+  if (gamePaused) return;
   // Move the lane dividers for road movement effect
   laneDashOffset += obstacleSpeed;
+
+
 
   // Smooth car movement between lanes
   const smoothing = 0.1;
@@ -209,17 +334,39 @@ function gameLoop() {
 
 // ! Input Handling --------------------------------------------
 
-// ^ Handle W/S key presses for lane switching
-document.addEventListener('keydown', e => {
-  if (!gameRunning) return;
-  if (e.key === 'w' && car.lane > 0) {
-    car.lane--;
-  } else if (e.key === 's' && car.lane < 2) {
-    car.lane++;
-  }
+// ^ Handle W/S key presses for lane switching and pauseing game 
 
-  // Set the new vertical target based on the lane
-  car.targetY = grassHeight + car.lane * laneHeight + (laneHeight - 40) / 2;
+// Enhanced keyboard input handler with support for both WASD and arrow keys
+document.addEventListener('keydown', e => {
+  // Handle pause/resume with Escape key
+  if (e.key === 'Escape' && gameRunning) {
+    if (inPauseSettings) {
+      return; // Ignore Escape key press
+    }
+    if (gamePaused) { // Resume the game
+      resumeGame();
+    } else { // Pause the game
+      pauseGame();
+    }
+    return; // Prevent default behavior
+  }
+  
+  // Don't process movement input if game isn't running or is paused
+  if (!gameRunning || gamePaused) return;
+  
+  // Move up with W or Up Arrow
+  if ((e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') && car.lane > 0) {
+    car.lane--;
+    e.preventDefault(); // Prevent default browser behavior
+  } 
+  // Move down with S or Down Arrow
+  else if ((e.key === 's' || e.key === 'S' || e.key === 'ArrowDown') && car.lane < numberOfLanes - 1) {
+    car.lane++;
+    e.preventDefault(); // Prevent default browser behavior
+  }
+  
+  // Calculate new target Y position for smooth animation
+  car.targetY = laneHeight * car.lane + (laneHeight - 40) / 2;
 });
 
 // ! UI Button Event Listeners
@@ -228,6 +375,9 @@ document.addEventListener('keydown', e => {
 startButton.addEventListener('click', () => {
   startScreen.style.display = 'none';
   gameRunning = true;
+  timeLeft = defaultTimer; // Reset timer to default
+  timerDisplayUpdate(); // Update display
+  startTimer(); // Start the timer
   spawnObstacle();
   gameLoop();
 });
@@ -252,20 +402,29 @@ applyOptionsButton.addEventListener('click', () => {
   spawnDelayMax = parseInt(spawnMaxInput.value);
 
   optionsMenu.style.display = 'none';
-  mainButtons.style.display = 'flex';
+  
+  if (gamePaused) {
+    pauseMenu.style.display = 'flex';
+  } else {
+    mainButtons.style.display = 'flex';
+  }
+  
 });
 
 // ^ Restart the game from the Game Over screen
 restartButton.addEventListener('click', () => {
   // Reset everything
   obstacles = [];
-  car.lane = 1;
-  car.y = grassHeight + laneHeight + (laneHeight - 40) / 2;
+  car.lane = 2;
+  car.y = laneHeight * 2 + (laneHeight - 40) / 2;
   car.targetY = car.y;
+  timeLeft = defaultTimer; // Reset timer
+  timerDisplayUpdate(); // Update display
 
   gameOverScreen.style.display = 'none';
   gameRunning = true;
 
+  startTimer(); // Start the timer
   spawnObstacle();
   gameLoop();
 });
@@ -274,12 +433,85 @@ restartButton.addEventListener('click', () => {
 mainMenuButton.addEventListener('click', () => {
   // Resets everything
   obstacles = [];
-  car.lane = 1;
-  car.y = grassHeight + laneHeight + (laneHeight - 40) / 2;
+  car.lane = 2;
+  car.y = laneHeight * 2 + (laneHeight - 40) / 2;
   car.targetY = car.y;
+  clearInterval(timerInterval); // Clear the timer interval
+  timeLeft = defaultTimer; // Reset timer
+  timerDisplayUpdate(); // Update display
 
   gameOverScreen.style.display = 'none';
   startScreen.style.display = 'flex';
+});
+
+function pauseGame() {
+  if (!gameRunning || gamePaused) return;
+  
+  gamePaused = true;
+  clearTimeout(obstacleTimer); // Stop spawning obstacles
+  pauseTimer(); // Pause the timer
+  pauseMenu.style.display = 'flex';
+}
+// ^ Resume the game from the pause menu
+function resumeGame() {
+  if (!gamePaused) return;
+  
+  pauseMenu.style.display = 'none';
+  gamePaused = false;
+  spawnObstacle(); // Restart obstacle spawning
+  resumeTimer(); // Resume the timer
+  requestAnimationFrame(gameLoop); // Restart the game loop
+}
+
+
+// Add pause menu button event listeners
+resumeButton.addEventListener('click', resumeGame);
+
+pauseMainMenuButton.addEventListener('click', () => {
+  // Reset game state
+  obstacles = [];
+  car.lane = 2;
+  car.y = laneHeight * 2 + (laneHeight - 40) / 2;
+  car.targetY = car.y;
+  gamePaused = false;
+  gameRunning = false;
+  
+  pauseMenu.style.display = 'none';
+  startScreen.style.display = 'flex';
+});
+
+//  event listener for restart button in pause menu
+pauseRestartButton.addEventListener('click', () => {
+  // Reset game state
+  obstacles = [];
+  car.lane = 2;
+  car.y = laneHeight * 2 + (laneHeight - 40) / 2;
+  car.targetY = car.y;
+  
+  // Hide pause menu
+  pauseMenu.style.display = 'none';
+  
+  // Reset pause state
+  gamePaused = false;
+  
+  // Start game fresh
+  gameRunning = true;
+  spawnObstacle();
+  gameLoop();
+});
+
+// ^ Not implemented overlay button event listener this is just a placeholder for now and is for the settings menu
+pauseOptionsButton.addEventListener('click', () => {
+  pauseMenu.style.display = 'none';
+  notImplementedOverlay.style.display = 'flex';
+  inPauseSettings = true; // Set the flag to indicate we're in pause settings
+});
+
+// Add click event for return to pause menu button
+returnToPauseButton.addEventListener('click', () => {
+  notImplementedOverlay.style.display = 'none';
+  pauseMenu.style.display = 'flex';
+  inPauseSettings = false; // Clear the flag when returning to pause menu
 });
 
 // ! Initial Draws (for when the page loads)
