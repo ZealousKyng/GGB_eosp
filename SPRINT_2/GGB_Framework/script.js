@@ -25,6 +25,9 @@ const obstacleImages =
   return img;
 });
 
+//Timer Constant Default Data
+const defaultTimer = 99;
+
 // ^ UI Element References
 const startScreen = document.getElementById('startScreen');
 const startButton = document.getElementById('startButton');
@@ -77,7 +80,7 @@ let spawnDelayMax = 2000;     // Maximum time between spawns
 let laneDashOffset = 0;       // Used to animate lane lines
 
 let timerInterval; //Timer for game timer
-let timeLeft = 99; //Time left in the game from start
+let timeLeft = defaultTimer; //Time left in the game from start
 
 
 // ! Drawing Functions -----------------------------------------------
@@ -201,6 +204,8 @@ function spawnObstacle() {
 // ^ Detects collisions between the car and obstacles
 function checkCollision() {
     for (let obs of obstacles) {
+        let collision = false;
+        
         if (obs.size == "Large") {
             if (
                 car.x < obs.x + obs.width &&
@@ -208,10 +213,8 @@ function checkCollision() {
                 car.y < obs.y + obs.height &&
                 car.y + car.height > obs.y
             ) {
-              //  Collision happened — stop game and show Game Over screen
-              gameRunning = false;
-              clearTimeout(obstacleTimer);
-              gameOverScreen.style.display = 'flex';
+                collision = true;
+                deductTime(6); // 6 second deduction
             }
             
         } else if (obs.size == "Medimum") {
@@ -221,10 +224,8 @@ function checkCollision() {
                 car.y < obs.y + obs.height &&
                 car.y + car.height > obs.y
             ) {
-              //  Collision happened — stop game and show Game Over screen
-              gameRunning = false;
-              clearTimeout(obstacleTimer);
-              gameOverScreen.style.display = 'flex';
+                collision = true;
+                deductTime(4); // 4 second deduction
             }
         } else if (obs.size == "Small") {
             if (
@@ -233,11 +234,14 @@ function checkCollision() {
                 car.y < obs.y + obs.height &&
                 car.y + car.height > obs.y
             ) {
-              //  Collision happened — stop game and show Game Over screen
-              gameRunning = false;
-              clearTimeout(obstacleTimer);
-              gameOverScreen.style.display = 'flex';
+                collision = true;
+                deductTime(2); // 2 second deduction
             }
+        }
+        
+        // Remove object if collision occurs.
+        if (collision) {
+            obstacles = obstacles.filter(o => o !== obs);
         }
     }
 }
@@ -246,12 +250,17 @@ function checkCollision() {
 
 //Updates the timer displayed
 function timerDisplayUpdate() {
-  timerDisplay.textContent = `Time Left: ${timeLeft}`;
+  timerDisplay.textContent = `${timeLeft}`;
+  if (timeLeft <= 0) {
+    endGameForTimer();
+  }
 }
 
 //Function to use to end the game when time runs out.
 function endGameForTimer() {
+  if (!gameRunning) return; // Prevent multiple calls
   gameRunning = false;
+  gamePaused = false;
   clearTimeout(obstacleTimer);
   clearInterval(timerInterval); 
   gameOverScreen.style.display = 'flex';
@@ -263,13 +272,9 @@ function startTimer()
   timerInterval = setInterval(() => 
   {
     if (!gamePaused && timeLeft > 0) 
-      {  
+    {  
       timeLeft--;
       timerDisplayUpdate();
-      if (timeLeft <= 0) 
-      {
-        endGameForTimer(); //If games timer is 0, end game.
-      }
     }
   }, 1000); //Update every 1000ms (1 second)
 }
@@ -278,7 +283,7 @@ function startTimer()
 function deductTime(deduction) 
 {
   timeLeft -= deduction;
-  if (timeLeft < 0) //No negatime time allowed.
+  if (timeLeft <= 0) //No negative time allowed.
   {
     timeLeft = 0;
   }
@@ -365,6 +370,9 @@ document.addEventListener('keydown', e => {
 startButton.addEventListener('click', () => {
   startScreen.style.display = 'none';
   gameRunning = true;
+  timeLeft = defaultTimer; // Reset timer to default
+  timerDisplayUpdate(); // Update display
+  startTimer(); // Start the timer
   spawnObstacle();
   gameLoop();
 });
@@ -398,10 +406,13 @@ restartButton.addEventListener('click', () => {
   car.lane = 2;
   car.y = laneHeight * 2 + (laneHeight - 40) / 2;
   car.targetY = car.y;
+  timeLeft = defaultTimer; // Reset timer
+  timerDisplayUpdate(); // Update display
 
   gameOverScreen.style.display = 'none';
   gameRunning = true;
 
+  startTimer(); // Start the timer
   spawnObstacle();
   gameLoop();
 });
@@ -413,6 +424,9 @@ mainMenuButton.addEventListener('click', () => {
   car.lane = 2;
   car.y = laneHeight * 2 + (laneHeight - 40) / 2;
   car.targetY = car.y;
+  clearInterval(timerInterval); // Clear the timer interval
+  timeLeft = defaultTimer; // Reset timer
+  timerDisplayUpdate(); // Update display
 
   gameOverScreen.style.display = 'none';
   startScreen.style.display = 'flex';
@@ -423,6 +437,7 @@ function pauseGame() {
   
   gamePaused = true;
   clearTimeout(obstacleTimer); // Stop spawning obstacles
+  pauseTimer(); // Pause the timer
   pauseMenu.style.display = 'flex';
 }
 // ^ Resume the game from the pause menu
@@ -432,6 +447,7 @@ function resumeGame() {
   pauseMenu.style.display = 'none';
   gamePaused = false;
   spawnObstacle(); // Restart obstacle spawning
+  resumeTimer(); // Resume the timer
   requestAnimationFrame(gameLoop); // Restart the game loop
 }
 
