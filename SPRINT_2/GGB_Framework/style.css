@@ -25,8 +25,7 @@ body {
     image-rendering: pixelated;
     image-rendering: crisp-edges;
   }
-  
-  #startScreen {
+
   position: absolute;
   top: 50%;
   left: 50%;
@@ -75,6 +74,7 @@ body {
 }
   
   #startButton,
+  #difficultyButton,
   #optionsButton,
   #applyOptionsButton {
     margin-top: 20px;

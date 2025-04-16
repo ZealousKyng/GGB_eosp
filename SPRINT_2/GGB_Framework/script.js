@@ -41,6 +41,11 @@ const mainButtons = document.getElementById('mainButtons');
 const gameOverScreen = document.getElementById('gameOverScreen');
 const restartButton = document.getElementById('restartButton');
 const mainMenuButton = document.getElementById('mainMenuButton');
+const difficultyButton = document.getElementById('difficultyButton');
+const difficultyMenu = document.getElementById('difficultyMenu');
+const easyButton = document.getElementById('easyButton');
+const mediumButton = document.getElementById('mediumButton');
+const hardButton = document.getElementById('hardButton');
 
 const pauseMenu = document.getElementById('pauseMenu');
 const resumeButton = document.getElementById('resumeButton');
@@ -381,6 +386,13 @@ startButton.addEventListener('click', () => {
 optionsButton.addEventListener('click', () => {
   mainButtons.style.display = 'none';
   optionsMenu.style.display = 'flex';
+});
+
+// ^ Show difficulty options menu
+difficultyButton.addEventListener('click', () => {
+  mainButtons.style.display = 'none';
+  optionsMenu.style.display = 'none';
+  difficultyMenu.style.display = 'flex';
 });
 
 // ^ Apply selected options
