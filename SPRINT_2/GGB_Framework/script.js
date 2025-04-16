@@ -25,6 +25,9 @@ const obstacleImages =
   return img;
 });
 
+//Timer Constant Default Data
+const defaultTimer = 99;
+
 // ^ UI Element References
 const startScreen = document.getElementById('startScreen');
 const startButton = document.getElementById('startButton');
@@ -77,7 +80,7 @@ let spawnDelayMax = 2000;     // Maximum time between spawns
 let laneDashOffset = 0;       // Used to animate lane lines
 
 let timerInterval; //Timer for game timer
-let timeLeft = 99; //Time left in the game from start
+let timeLeft = defaultTimer; //Time left in the game from start
 
 
 // ! Drawing Functions -----------------------------------------------
@@ -211,7 +214,7 @@ function checkCollision() {
                 car.y + car.height > obs.y
             ) {
                 collision = true;
-                deductTime(6); // 6 seconds for large obstacles
+                deductTime(6); // 6 second deduction
             }
             
         } else if (obs.size == "Medimum") {
@@ -222,7 +225,7 @@ function checkCollision() {
                 car.y + car.height > obs.y
             ) {
                 collision = true;
-                deductTime(4); // 4 seconds for medium obstacles
+                deductTime(4); // 4 second deduction
             }
         } else if (obs.size == "Small") {
             if (
@@ -232,11 +235,11 @@ function checkCollision() {
                 car.y + car.height > obs.y
             ) {
                 collision = true;
-                deductTime(2); // 2 seconds for small obstacles
+                deductTime(2); // 2 second deduction
             }
         }
         
-        // If collision occurred, remove the obstacle
+        // Remove object if collision occurs.
         if (collision) {
             obstacles = obstacles.filter(o => o !== obs);
         }
@@ -367,7 +370,7 @@ document.addEventListener('keydown', e => {
 startButton.addEventListener('click', () => {
   startScreen.style.display = 'none';
   gameRunning = true;
-  timeLeft = 99; // Reset timer
+  timeLeft = defaultTimer; // Reset timer to default
   timerDisplayUpdate(); // Update display
   startTimer(); // Start the timer
   spawnObstacle();
@@ -403,7 +406,7 @@ restartButton.addEventListener('click', () => {
   car.lane = 2;
   car.y = laneHeight * 2 + (laneHeight - 40) / 2;
   car.targetY = car.y;
-  timeLeft = 99; // Reset timer
+  timeLeft = defaultTimer; // Reset timer
   timerDisplayUpdate(); // Update display
 
   gameOverScreen.style.display = 'none';
@@ -422,7 +425,7 @@ mainMenuButton.addEventListener('click', () => {
   car.y = laneHeight * 2 + (laneHeight - 40) / 2;
   car.targetY = car.y;
   clearInterval(timerInterval); // Clear the timer interval
-  timeLeft = 99; // Reset timer
+  timeLeft = defaultTimer; // Reset timer
   timerDisplayUpdate(); // Update display
 
   gameOverScreen.style.display = 'none';
