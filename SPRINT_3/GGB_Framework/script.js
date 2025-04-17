@@ -34,18 +34,13 @@ const startButton = document.getElementById('startButton');
 const optionsButton = document.getElementById('optionsButton');
 const optionsMenu = document.getElementById('optionsMenu');
 const applyOptionsButton = document.getElementById('applyOptionsButton');
-const speedInput = document.getElementById('speedInput');
-const spawnInput = document.getElementById('spawnInput');
-const spawnMaxInput = document.getElementById('spawnMaxInput');
 const mainButtons = document.getElementById('mainButtons');
 const gameOverScreen = document.getElementById('gameOverScreen');
 const restartButton = document.getElementById('restartButton');
 const mainMenuButton = document.getElementById('mainMenuButton');
-const difficultyButton = document.getElementById('difficultyButton');
-const difficultyMenu = document.getElementById('difficultyMenu');
-const easyButton = document.getElementById('easyButton');
-const mediumButton = document.getElementById('mediumButton');
-const hardButton = document.getElementById('hardButton');
+const difficultySelect = document.getElementById('difficultySelect');
+const startLightOverlay = document.getElementById('startLightOverlay');
+
 
 const pauseMenu = document.getElementById('pauseMenu');
 const resumeButton = document.getElementById('resumeButton');
@@ -307,6 +302,44 @@ function resumeTimer()
   startTimer(); // Restart the timer
 }
 
+// Starting animation
+// * - NIC
+function showStartLightSequence() {
+  let sequence = [
+    { text: "Ready", color: "red" },
+    { text: "Set", color: "orange" },
+    { text: "Go!", color: "lime" }
+  ];
+
+  //Initializing index to step through lights
+  let index = 0;
+  startLightOverlay.style.display = 'block';
+
+  const step = () => {
+    if (index < sequence.length) {
+      startLightOverlay.textContent = sequence[index].text;
+      startLightOverlay.style.color = sequence[index].color;
+      index++;
+      setTimeout(step, 700); // Time per light
+    } else {
+      startLightOverlay.style.display = 'none';
+      startGameAfterLight(); // Actually start the game here
+    }
+  };
+
+  step(); // Start sequence
+}
+
+// Simple game start fnction calls
+// * - NIC
+function startGameAfterLight() {
+  gameRunning = true;
+  timeLeft = defaultTimer;
+  timerDisplayUpdate();
+  startTimer();
+  spawnObstacle();
+  gameLoop();
+}
 
 // ^ Main Game Loop
 function gameLoop() {
@@ -374,12 +407,8 @@ document.addEventListener('keydown', e => {
 // ^ Start the game from the main menu
 startButton.addEventListener('click', () => {
   startScreen.style.display = 'none';
-  gameRunning = true;
-  timeLeft = defaultTimer; // Reset timer to default
-  timerDisplayUpdate(); // Update display
-  startTimer(); // Start the timer
-  spawnObstacle();
-  gameLoop();
+  showStartLightSequence(); // Trigger traffic light
+  //Moved all the other functions to the StartLightSequence 
 });
 
 // ^ Show options menu
@@ -388,28 +417,31 @@ optionsButton.addEventListener('click', () => {
   optionsMenu.style.display = 'flex';
 });
 
-// ^ Show difficulty options menu
-difficultyButton.addEventListener('click', () => {
-  mainButtons.style.display = 'none';
-  optionsMenu.style.display = 'none';
-  difficultyMenu.style.display = 'flex';
-});
-
 // ^ Apply selected options
+// * - NIC
 applyOptionsButton.addEventListener('click', () => {
-  obstacleSpeed = parseInt(speedInput.value);
-  spawnDelayMin = parseInt(spawnInput.value);
-  spawnDelayMax = parseInt(spawnMaxInput.value);
+  const selectedDifficulty = difficultySelect.value;
+
+  //Presets for difficulty level
+  if (selectedDifficulty === 'easy') {
+    obstacleSpeed = 3;
+    spawnDelayMin = 1500;
+    spawnDelayMax = 3000;
+  } else if (selectedDifficulty === 'medium') {
+    obstacleSpeed = 5;
+    spawnDelayMin = 800;
+    spawnDelayMax = 2000;
+  } else if (selectedDifficulty === 'hard') {
+    obstacleSpeed = 8;
+    spawnDelayMin = 400;
+    spawnDelayMax = 1200;
+  }
 
   optionsMenu.style.display = 'none';
-  
-  if (gamePaused) {
-    pauseMenu.style.display = 'flex';
-  } else {
-    mainButtons.style.display = 'flex';
-  }
-  
+  startScreen.style.display = 'flex'; //  Show main menu
+  mainButtons.style.display = 'flex'; // Show main buttons
 });
+
 
 // ^ Restart the game from the Game Over screen
 restartButton.addEventListener('click', () => {
@@ -468,17 +500,13 @@ function resumeGame() {
 resumeButton.addEventListener('click', resumeGame);
 
 pauseMainMenuButton.addEventListener('click', () => {
-  // Reset game state
-  obstacles = [];
-  car.lane = 2;
-  car.y = laneHeight * 2 + (laneHeight - 40) / 2;
-  car.targetY = car.y;
   gamePaused = false;
   gameRunning = false;
-  
   pauseMenu.style.display = 'none';
   startScreen.style.display = 'flex';
+  mainButtons.style.display = 'flex'; //  Added this to ensure buttons show
 });
+
 
 //  event listener for restart button in pause menu
 pauseRestartButton.addEventListener('click', () => {
@@ -496,6 +524,9 @@ pauseRestartButton.addEventListener('click', () => {
   
   // Start game fresh
   gameRunning = true;
+  timeLeft = defaultTimer;
+  timerDisplayUpdate();
+  startTimer();
   spawnObstacle();
   gameLoop();
 });

@@ -21,6 +21,8 @@
 
     </canvas>
 
+    <div id="startLightOverlay">Ready</div>
+
     <div id="timerDisplay">99</div>
 
     <!-- ^ Start Screen -->
@@ -36,7 +38,6 @@
       <div id="mainButtons">
         <button id="startButton">Play</button>
         <button id="optionsButton">Options</button>
-        <button id="difficultyButton">Difficulty</button>
       </div>
       
       <img id="carImageMainMenu" src="assets/carPixel.png" alt="Car Image">
@@ -47,23 +48,16 @@
       <!-- ^ Options menu -->
       <!--  lets player customize obstacle speed and spawn timing -->
       <div id="optionsMenu">
-        <label for="speedInput">Obstacle Speed (px/frame):</label>
-        <input type="number" id="speedInput" value="5" min="1" max="20" />
-
-        <label for="spawnInput">Min Spawn Delay (ms):</label>
-        <input type="number" id="spawnInput" value="800" min="100" />
-
-        <label for="spawnMaxInput">Max Spawn Delay (ms):</label>
-        <input type="number" id="spawnMaxInput" value="2000" min="200" />
-
+        <label for="difficultySelect">Difficulty:</label>
+        <!--  drop down menu to select difficulty -->
+        <select id="difficultySelect">
+          <option value="easy">Easy</option>
+          <option value="medium" selected>Medium</option>
+          <option value="hard">Hard</option>
+        </select>
         <button id="applyOptionsButton">Apply</button>
       </div>
 
-      <div id="difficultyMenu" style="display: none;">
-        <button id="easyButton">Easy</button>
-        <button id="mediumButton">Medium</button>
-        <button id="hardButton">Hard</button>
-      </div>
     </div>
 
     <!-- ^ Game Over Screen -->
