@@ -27,6 +27,7 @@ const obstacleImages =
 
 //Timer Constant Default Data
 const defaultTimer = 99;
+const defaultEndTimer = 30;
 
 // ^ UI Element References
 const startScreen = document.getElementById('startScreen');
@@ -81,6 +82,9 @@ let laneDashOffset = 0;       // Used to animate lane lines
 
 let timerInterval; //Timer for game timer
 let timeLeft = defaultTimer; //Time left in the game from start
+
+let EndGameInterval; // Timer til the finish Line Spawns
+let endTimeLeft = defaultEndTimer; // Time left
 
 
 // ! Drawing Functions -----------------------------------------------
@@ -216,11 +220,11 @@ function checkCollision() {
                 collision = true;
                 deductTime(6); // 6 second deduction
             }
-            
+
         } else if (obs.size == "Medimum") {
             if (
                 car.x < obs.x + obs.width &&
-                car.x + car.width -15 > obs.x &&
+                car.x + car.width - 15 > obs.x &&
                 car.y < obs.y + obs.height &&
                 car.y + car.height > obs.y
             ) {
@@ -230,7 +234,7 @@ function checkCollision() {
         } else if (obs.size == "Small") {
             if (
                 car.x < obs.x + obs.width &&
-                car.x + car.width -25 > obs.x &&
+                car.x + car.width - 25 > obs.x &&
                 car.y < obs.y + obs.height &&
                 car.y + car.height > obs.y
             ) {
@@ -239,12 +243,14 @@ function checkCollision() {
             }
         }
         
+        
         // Remove object if collision occurs.
         if (collision) {
             obstacles = obstacles.filter(o => o !== obs);
         }
     }
 }
+
 
 // ! Main Game Timer Functions
 
@@ -263,6 +269,7 @@ function endGameForTimer() {
   gamePaused = false;
   clearTimeout(obstacleTimer);
   clearInterval(timerInterval); 
+  clearInterval(EndGameInterval);
   gameOverScreen.style.display = 'flex';
 }
 
@@ -279,6 +286,31 @@ function startTimer()
   }, 1000); //Update every 1000ms (1 second)
 }
 
+//Function to start the End Game timer.
+//*End game timer created by Alex Burns*
+function startEndGameTimer() {
+    EndGameInterval = setInterval(() => {
+        if (!gamePaused && endTimeLeft > 0) {
+            endTimeLeft--;
+        }
+        if (!gamePaused && endTimeLeft <= 0) {
+            // Once time has ended then spawn a finish Line that will end the game that must be
+            // temporarly will end the game imeditaly
+            endGameFromSuccess();
+        }
+    }, 1000); //Update every 1000ms (1 second)
+}
+ // This Function Will end the game using the EGT
+function endGameFromSuccess(){
+    if (!gameRunning) return; // Prevent multiple calls
+    gameRunning = false;
+    gamePaused = false;
+    clearTimeout(obstacleTimer);
+    clearInterval(timerInterval);
+    clearInterval(EndGameInterval);
+    gameOverScreen.style.display = 'flex';
+}
+
 //Deducts time when an obstacle is hit. Parameter is the amount of time in seconds you want deducted.
 function deductTime(deduction) 
 {
@@ -293,13 +325,15 @@ function deductTime(deduction)
 //Pauses the timer upon being called
 function pauseTimer() 
 {
-  clearInterval(timerInterval); // Stop the timer
+    clearInterval(timerInterval); // Stop the timer
+    clearInterval(EndGameInterval); // Stop the EOG timer
 }
 
 //Resume the timer after unpausing the game
 function resumeTimer() 
 {
-  startTimer(); // Restart the timer
+    startTimer(); // Restart the timer
+    startEndGameTimer();
 }
 
 // Starting animation
@@ -335,8 +369,10 @@ function showStartLightSequence() {
 function startGameAfterLight() {
   gameRunning = true;
   timeLeft = defaultTimer;
+  endTimeLeft = defaultEndTimer;
   timerDisplayUpdate();
   startTimer();
+  startEndGameTimer();
   spawnObstacle();
   gameLoop();
 }
@@ -451,12 +487,14 @@ restartButton.addEventListener('click', () => {
   car.y = laneHeight * 2 + (laneHeight - 40) / 2;
   car.targetY = car.y;
   timeLeft = defaultTimer; // Reset timer
+  endTimeLeft = defaultEndTimer; //Reset End Of Game Timer
   timerDisplayUpdate(); // Update display
 
   gameOverScreen.style.display = 'none';
   gameRunning = true;
 
   startTimer(); // Start the timer
+  startEndGameTimer();
   spawnObstacle();
   gameLoop();
 });
@@ -469,7 +507,9 @@ mainMenuButton.addEventListener('click', () => {
   car.y = laneHeight * 2 + (laneHeight - 40) / 2;
   car.targetY = car.y;
   clearInterval(timerInterval); // Clear the timer interval
+  clearInterval(EndGameInterval); // clears the EOG timer
   timeLeft = defaultTimer; // Reset timer
+  endTimeLeft = defaultEndTimer; //Reset end game timer
   timerDisplayUpdate(); // Update display
 
   gameOverScreen.style.display = 'none';
@@ -525,8 +565,10 @@ pauseRestartButton.addEventListener('click', () => {
   // Start game fresh
   gameRunning = true;
   timeLeft = defaultTimer;
+  endTimeLeft = defaultEndTimer;
   timerDisplayUpdate();
   startTimer();
+  startEndGameTimer();
   spawnObstacle();
   gameLoop();
 });
