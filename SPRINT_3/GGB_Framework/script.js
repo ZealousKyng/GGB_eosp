@@ -40,21 +40,21 @@ const gameOverScreen = document.getElementById('gameOverScreen');
 const restartButton = document.getElementById('restartButton');
 const mainMenuButton = document.getElementById('mainMenuButton');
 const difficultySelect = document.getElementById('difficultySelect');
-const startLightOverlay = document.getElementById('startLightOverlay');
+const startLightOverlay = document.getElementById('startLightOverlay'); 
 
 
-const pauseMenu = document.getElementById('pauseMenu');
-const resumeButton = document.getElementById('resumeButton');
-const pauseOptionsButton = document.getElementById('pauseOptionsButton');
-const pauseMainMenuButton = document.getElementById('pauseMainMenuButton');
-const pauseRestartButton = document.getElementById('pauseRestartButton');
+const pauseMenu = document.getElementById('pauseMenu'); // Pause menu element
+const resumeButton = document.getElementById('resumeButton'); // Resume button element
+const pauseOptionsButton = document.getElementById('pauseOptionsButton'); // Options button in pause menu
+const pauseMainMenuButton = document.getElementById('pauseMainMenuButton'); // Main menu button in pause menu
+const pauseRestartButton = document.getElementById('pauseRestartButton'); // Restart button in pause menu
 
-const timerDisplay = document.getElementById('timerDisplay');
+const timerDisplay = document.getElementById('timerDisplay'); // Timer display element
 
-const pauseTip = document.createElement('div');
-pauseTip.className = 'pause-tip';
-pauseTip.textContent = 'Press ESC to pause the game';
-document.getElementById('gameContainer').appendChild(pauseTip);
+const pauseTip = document.createElement('div'); // Create a new div for the pause tip
+pauseTip.className = 'pause-tip'; // Add a class for styling
+pauseTip.textContent = 'Press ESC to pause the game'; // Set the text content
+document.getElementById('gameContainer').appendChild(pauseTip); // Append the pause tip to the game container
 
 const notImplementedOverlay = document.getElementById('notImplementedOverlay');
 const returnToPauseButton = document.getElementById('returnToPauseButton');
