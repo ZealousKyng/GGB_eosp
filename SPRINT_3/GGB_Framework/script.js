@@ -30,31 +30,31 @@ const defaultTimer = 99;
 const defaultEndTimer = 30;
 
 // ^ UI Element References
-const startScreen = document.getElementById('startScreen');
-const startButton = document.getElementById('startButton');
-const optionsButton = document.getElementById('optionsButton');
-const optionsMenu = document.getElementById('optionsMenu');
-const applyOptionsButton = document.getElementById('applyOptionsButton');
-const mainButtons = document.getElementById('mainButtons');
-const gameOverScreen = document.getElementById('gameOverScreen');
-const restartButton = document.getElementById('restartButton');
-const mainMenuButton = document.getElementById('mainMenuButton');
-const difficultySelect = document.getElementById('difficultySelect');
-const startLightOverlay = document.getElementById('startLightOverlay');
+const startScreen = document.getElementById('startScreen'); // Main menu element
+const startButton = document.getElementById('startButton');   // Start button element
+const optionsButton = document.getElementById('optionsButton');   // Options button element
+const optionsMenu = document.getElementById('optionsMenu');   // Options menu element
+const applyOptionsButton = document.getElementById('applyOptionsButton');     // Apply button element    
+const mainButtons = document.getElementById('mainButtons');     // Main menu buttons element
+const gameOverScreen = document.getElementById('gameOverScreen');     // Game Over screen element
+const restartButton = document.getElementById('restartButton');     // Restart button element
+const mainMenuButton = document.getElementById('mainMenuButton');     // Main menu button element
+const difficultySelect = document.getElementById('difficultySelect'); // Difficulty select element
+const startLightOverlay = document.getElementById('startLightOverlay');  // Start light overlay element
 
 
-const pauseMenu = document.getElementById('pauseMenu');
-const resumeButton = document.getElementById('resumeButton');
-const pauseOptionsButton = document.getElementById('pauseOptionsButton');
-const pauseMainMenuButton = document.getElementById('pauseMainMenuButton');
-const pauseRestartButton = document.getElementById('pauseRestartButton');
+const pauseMenu = document.getElementById('pauseMenu'); // Pause menu element
+const resumeButton = document.getElementById('resumeButton'); // Resume button element
+const pauseOptionsButton = document.getElementById('pauseOptionsButton'); // Options button in pause menu
+const pauseMainMenuButton = document.getElementById('pauseMainMenuButton'); // Main menu button in pause menu
+const pauseRestartButton = document.getElementById('pauseRestartButton'); // Restart button in pause menu
 
-const timerDisplay = document.getElementById('timerDisplay');
+const timerDisplay = document.getElementById('timerDisplay'); // Timer display element
 
-const pauseTip = document.createElement('div');
-pauseTip.className = 'pause-tip';
-pauseTip.textContent = 'Press ESC to pause the game';
-document.getElementById('gameContainer').appendChild(pauseTip);
+const pauseTip = document.createElement('div'); // Create a new div for the pause tip
+pauseTip.className = 'pause-tip'; // Add a class for styling
+pauseTip.textContent = 'Press ESC to pause the game'; // Set the text content
+document.getElementById('gameContainer').appendChild(pauseTip); // Append the pause tip to the game container
 
 const notImplementedOverlay = document.getElementById('notImplementedOverlay');
 const returnToPauseButton = document.getElementById('returnToPauseButton');
