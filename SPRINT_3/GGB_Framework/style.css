@@ -214,6 +214,28 @@ body {
     z-index: 5;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     pointer-events: none;
+    transition: all 0.3s ease;
+  }
+
+  #timerDisplay.grass-effect {
+    animation: grassPulse 1s infinite;
+    color: #ff4444;
+    text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+  }
+
+  @keyframes grassPulse {
+    0% {
+        transform: translate(290px, -180px) scale(1);
+        color: #ff4444;
+    }
+    50% {
+        transform: translate(290px, -180px) scale(1.1);
+        color: #ff0000;
+    }
+    100% {
+        transform: translate(290px, -180px) scale(1);
+        color: #ff4444;
+    }
   }
 
   #pointsDeduction {

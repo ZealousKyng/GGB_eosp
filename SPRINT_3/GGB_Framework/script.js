@@ -82,7 +82,7 @@ let laneDashOffset = 0;       // Used to animate lane lines
 
 let timerInterval; //Timer for game timer
 let timeLeft = defaultTimer; //Time left in the game from start
-let isFastTimer = false; // Track if we're in fast timer mode
+let isFastTimer = false; // Track if we are in the grass lane/fast timer mode.
 
 let EndGameInterval; // Timer til the finish Line Spawns
 let endTimeLeft = defaultEndTimer; // Time left
@@ -255,14 +255,14 @@ function checkCollision() {
 
 // ! Main Game Timer Functions
 
-//Updates the timer displayed
+//Updates the timer displayed on the screen. 
 function timerDisplayUpdate() {
   timerDisplay.textContent = `${timeLeft}`;
   if (timeLeft <= 0) {
     endGameForTimer();
   }
   
-  // Reset timer color to white if not in grass
+  // Reset timer color to white if not in grass. Flashes red in grass
   if (!isFastTimer) {
     timerDisplay.style.color = 'white';
   }
@@ -420,9 +420,8 @@ function gameLoop() {
         }
       }, 500);
       isFastTimer = true;
+      timerDisplay.classList.add('grass-effect');
     }
-    // Flash timer red in grass lanes
-    timerDisplay.style.color = (Date.now() % 1000 < 500) ? 'red' : 'white';
   } else {
     // If in road lane and in fast mode
     if (isFastTimer) {
@@ -434,7 +433,7 @@ function gameLoop() {
         }
       }, 1000);
       isFastTimer = false;
-      timerDisplay.style.color = 'white';
+      timerDisplay.classList.remove('grass-effect');
     }
   }
 
