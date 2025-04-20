@@ -82,6 +82,7 @@ let laneDashOffset = 0;       // Used to animate lane lines
 
 let timerInterval; //Timer for game timer
 let timeLeft = defaultTimer; //Time left in the game from start
+let isFastTimer = false; // Track if we are in the grass lane/fast timer mode.
 
 let EndGameInterval; // Timer til the finish Line Spawns
 let endTimeLeft = defaultEndTimer; // Time left
@@ -254,11 +255,16 @@ function checkCollision() {
 
 // ! Main Game Timer Functions
 
-//Updates the timer displayed
+//Updates the timer displayed on the screen.   - Jericho McGowan 4/19/2025
 function timerDisplayUpdate() {
-  timerDisplay.textContent = `${timeLeft}`;
-  if (timeLeft <= 0) {
-    endGameForTimer();
+  timerDisplay.textContent = `${timeLeft}`; // Updates the timer display 
+  if (timeLeft <= 0) { // If the timer reaches 0 then end the game 
+    endGameForTimer(); // Calls the end game function  
+  }
+  
+  // Reset timer color to white if not in grass. Flashes red in grass 
+  if (!isFastTimer) {
+    timerDisplay.style.color = 'white';
   }
 }
 
@@ -273,9 +279,10 @@ function endGameForTimer() {
   gameOverScreen.style.display = 'flex';
 }
 
-//Function to start the timer.
+//Function to start the timer. - Jericho McGowan 4/19/2025
 function startTimer() 
 {
+  isFastTimer = false; // Reset to normal speed 
   timerInterval = setInterval(() => 
   {
     if (!gamePaused && timeLeft > 0) 
@@ -283,7 +290,7 @@ function startTimer()
       timeLeft--;
       timerDisplayUpdate();
     }
-  }, 1000); //Update every 1000ms (1 second)
+  }, 1000); //Initial update every 1000ms - Jericho McGowan 4/19/2025
 }
 
 //Function to start the End Game timer.
@@ -319,6 +326,23 @@ function deductTime(deduction)
   {
     timeLeft = 0;
   }
+  
+  // Show points deduction - Jericho McGowan 4/19/2025
+  const pointsDisplay = document.getElementById('pointsDeduction');
+  
+  // Reset any existing timeout - Jericho McGowan 4/19/2025
+  if (pointsDisplay.timeoutId) {
+    clearTimeout(pointsDisplay.timeoutId);
+  }
+  
+  pointsDisplay.textContent = `-${deduction}`;
+  pointsDisplay.style.opacity = '1';
+  
+  // Hide after 1 second - Jericho McGowan 4/19/2025
+  pointsDisplay.timeoutId = setTimeout(() => {
+    pointsDisplay.style.opacity = '0';
+  }, 1000);
+  
   timerDisplayUpdate();
 }
 
@@ -384,7 +408,34 @@ function gameLoop() {
   // Move the lane dividers for road movement effect
   laneDashOffset += obstacleSpeed;
 
-
+  // Check lane position and update timer interval - Jericho McGowan 4/19/2025
+  if (car.lane === 0 || car.lane === 4) {
+    // If in grass lane and not already in fast mode - Jericho McGowan 4/19/2025
+    if (!isFastTimer) {
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        if (!gamePaused && timeLeft > 0) {
+          timeLeft--;
+          timerDisplayUpdate();
+        }
+      }, 500); // 500ms interval for grass lane - Jericho McGowan 4/19/2025
+      isFastTimer = true;
+      timerDisplay.classList.add('grass-effect');
+    }
+  } else {
+    // If in road lane and in fast mode
+    if (isFastTimer) {
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        if (!gamePaused && timeLeft > 0) {
+          timeLeft--;
+          timerDisplayUpdate();
+        }
+      }, 1000);
+      isFastTimer = false; // Reset to normal speed
+      timerDisplay.classList.remove('grass-effect');
+    }
+  }
 
   // Smooth car movement between lanes
   const smoothing = 0.1;

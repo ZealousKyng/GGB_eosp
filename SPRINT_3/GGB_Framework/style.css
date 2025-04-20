@@ -214,6 +214,45 @@ body {
     z-index: 5;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     pointer-events: none;
+    transition: all 0.3s ease; /* Transition for the timer display  - Jericho McGowan 4/19/2025 */ 
+  }
+
+  /* grass-effect animation code generated with assistance from ChatGPT (OpenAI), accessed on April 19, 2025 */
+  #timerDisplay.grass-effect { /* Grass effect for the timer display - Jericho McGowan 4/19/2025 */ 
+    animation: grassPulse 1s infinite;
+    color: #ff4444;
+    text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+  }
+
+  /* grassPulse animation code generated with assistance from ChatGPT (OpenAI), accessed on April 19, 2025 */
+  @keyframes grassPulse { /* Grass pulse effect for the timer display - Jericho McGowan 4/19/2025 */ 
+    0% { 
+        transform: translate(290px, -180px) scale(1);
+        color: #ff4444;
+    }
+    50% {
+        transform: translate(290px, -180px) scale(1.1);
+        color: #ff0000;
+    }
+    100% {
+        transform: translate(290px, -180px) scale(1);
+        color: #ff4444;
+    }
+  }
+
+  #pointsDeduction { /* Points deduction for the timer display - Jericho McGowan 4/19/2025 */ 
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(320px, -150px);
+    color: red;
+    font-size: 20px;
+    font-weight: bold;
+    z-index: 5; 
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); 
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s ease-out;
   }
 
   #notImplementedOverlay {
