@@ -82,6 +82,7 @@ let laneDashOffset = 0;       // Used to animate lane lines
 
 let timerInterval; //Timer for game timer
 let timeLeft = defaultTimer; //Time left in the game from start
+let isFastTimer = false; // Track if we're in fast timer mode
 
 let EndGameInterval; // Timer til the finish Line Spawns
 let endTimeLeft = defaultEndTimer; // Time left
@@ -260,6 +261,11 @@ function timerDisplayUpdate() {
   if (timeLeft <= 0) {
     endGameForTimer();
   }
+  
+  // Reset timer color to white if not in grass
+  if (!isFastTimer) {
+    timerDisplay.style.color = 'white';
+  }
 }
 
 //Function to use to end the game when time runs out.
@@ -276,6 +282,7 @@ function endGameForTimer() {
 //Function to start the timer.
 function startTimer() 
 {
+  isFastTimer = false; // Reset to normal speed
   timerInterval = setInterval(() => 
   {
     if (!gamePaused && timeLeft > 0) 
@@ -283,7 +290,7 @@ function startTimer()
       timeLeft--;
       timerDisplayUpdate();
     }
-  }, 1000); //Update every 1000ms (1 second)
+  }, 1000); //Initial update every 1000ms
 }
 
 //Function to start the End Game timer.
@@ -319,6 +326,23 @@ function deductTime(deduction)
   {
     timeLeft = 0;
   }
+  
+  // Show points deduction
+  const pointsDisplay = document.getElementById('pointsDeduction');
+  
+  // Clear any existing timeout
+  if (pointsDisplay.timeoutId) {
+    clearTimeout(pointsDisplay.timeoutId);
+  }
+  
+  pointsDisplay.textContent = `-${deduction}`;
+  pointsDisplay.style.opacity = '1';
+  
+  // Hide after 1 second
+  pointsDisplay.timeoutId = setTimeout(() => {
+    pointsDisplay.style.opacity = '0';
+  }, 1000);
+  
   timerDisplayUpdate();
 }
 
@@ -384,7 +408,35 @@ function gameLoop() {
   // Move the lane dividers for road movement effect
   laneDashOffset += obstacleSpeed;
 
-
+  // Check lane position and update timer interval
+  if (car.lane === 0 || car.lane === 4) {
+    // If in grass lane and not already in fast mode
+    if (!isFastTimer) {
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        if (!gamePaused && timeLeft > 0) {
+          timeLeft--;
+          timerDisplayUpdate();
+        }
+      }, 500);
+      isFastTimer = true;
+    }
+    // Flash timer red in grass lanes
+    timerDisplay.style.color = (Date.now() % 1000 < 500) ? 'red' : 'white';
+  } else {
+    // If in road lane and in fast mode
+    if (isFastTimer) {
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        if (!gamePaused && timeLeft > 0) {
+          timeLeft--;
+          timerDisplayUpdate();
+        }
+      }, 1000);
+      isFastTimer = false;
+      timerDisplay.style.color = 'white';
+    }
+  }
 
   // Smooth car movement between lanes
   const smoothing = 0.1;
