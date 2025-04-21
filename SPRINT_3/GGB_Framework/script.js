@@ -248,6 +248,9 @@ function checkCollision() {
         // Remove object if collision occurs.
         if (collision) {
             obstacles = obstacles.filter(o => o !== obs);
+            // Trigger screen shake
+            shakeAmplitude = 50; // Adjust this value to control shake intensity
+            shakeDuration = 50; //Adjust this value to control shake duration
         }
     }
 }
@@ -402,6 +405,11 @@ function startGameAfterLight() {
 }
 
 // ^ Main Game Loop
+let shakeAmplitude = 0;  // Amplitude of the shake
+let shakeDuration = 0; // Duration of the shake
+let shakeTimer = 0;  // Timer to reset shakeDuration value
+
+
 function gameLoop() {
   if (!gameRunning) return;
   if (gamePaused) return;
@@ -441,13 +449,29 @@ function gameLoop() {
   const smoothing = 0.1;
   car.y += (car.targetY - car.y) * smoothing;
 
+  // Apply shake if active
+  let offsetX = 0;
+  let offsetY = 0;
+  if (shakeAmplitude > 0) {
+    offsetX = (Math.random() - 0.5) * shakeAmplitude;
+    offsetY = (Math.random() - 0.5) * shakeAmplitude;
+    shakeTimer--;
+  if (shakeTimer <= 0) {
+    shakeAmplitude = 0;
+    shakeTimer = shakeDuration;
+  }
+}
+
   // Clear and redraw everything
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.translate(offsetX, offsetY); // Apply shake effect
   drawLanes();
   drawCar();
   drawObstacles();
   updateObstacles();
   checkCollision();
+  ctx.resetTransform(); //Reset transform for shake effect
+
 
   requestAnimationFrame(gameLoop); // Continue the loop
 }
