@@ -56,21 +56,21 @@ body {
     border-radius: 12px;   /* Rounds the corners of the pseudo-element */ 
   }
 
-#gameTitleImage {
-  width: 200px;         /* 50% of the 800px menu width for proper scale */
-  height: 200px;         /* Maintains the correct aspect ratio */
-  margin-bottom: 10px; /* Adds space below the image */
-  display: inline-block;;       /* Ensures proper centering */
-  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3)); /* Optional: adds subtle glow */
-}
+  #gameTitleImage {
+    width: 200px;         /* 50% of the 800px menu width for proper scale */
+    height: 200px;         /* Maintains the correct aspect ratio */
+    margin-bottom: 10px; /* Adds space below the image */
+    display: inline-block;;       /* Ensures proper centering */
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3)); /* Optional: adds subtle glow */
+  }
 
-#mainButtons,   /* Main buttons container */
-#difficultyMenu { /* Difficulty menu container */
-  display: flex;  /* Enables flexbox layout */
-  flex-direction: column;     /* Arranges buttons in a column */
-  align-items: center;  /* Centers buttons horizontally */
-  gap: 12px;    /* Adds space between buttons */
-}
+  #mainButtons,   /* Main buttons container */
+  #difficultyMenu { /* Difficulty menu container */
+    display: flex;  /* Enables flexbox layout */
+    flex-direction: column;     /* Arranges buttons in a column */
+    align-items: center;  /* Centers buttons horizontally */
+    gap: 12px;    /* Adds space between buttons */
+  }
   
   #startButton, /* Start button */
   #difficultyButton,  /* Difficulty button */
@@ -306,7 +306,8 @@ body {
     margin-top: 8px;    /* Adds space above the dropdown */
     border-radius: 5px;     /* Rounds the corners of the dropdown */
     text-align: center;  /* Centers the dropdown text */  
-  
+  }
+
   #startLightOverlay {    /* Overlay for the start light */
     position: absolute;     /* Allows the overlay to be positioned absolutely within the container */
     top: 50%;     /* Centers the overlay vertically */
@@ -320,7 +321,7 @@ body {
     text-shadow: 2px 2px 6px rgba(0,0,0,0.6);     /* Adds a shadow effect to the text */
     transition: all 0.3s ease;  
   }
-}
+
   
   
   
