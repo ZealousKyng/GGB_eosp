@@ -11,6 +11,10 @@ const laneHeight = canvas.height / numberOfLanes;
 const carImage = new Image();
 carImage.src = 'assets/carPixel.png'; // ~ Link to car png
 
+// Finish Line image
+const finishLine = new Image();
+finishLine.src = 'assets/FinishLine.png'; // ~ Link to Finish Line
+
 // & Obstacle images (randomized per obstacle)
 const obstacleImages = 
 [
@@ -27,7 +31,7 @@ const obstacleImages =
 
 //Timer Constant Default Data
 const defaultTimer = 99;
-const defaultEndTimer = 30;
+const defaultEndTimer = 37;
 
 // ^ UI Element References
 const startScreen = document.getElementById('startScreen'); // Main menu element
@@ -242,6 +246,13 @@ function checkCollision() {
                 collision = true;
                 deductTime(2); // 2 second deduction
             }
+        } else if (obs.size == "Omega") { //This is exclusively is used by the Finish Line (no height check to ensure cant "Dodge" the line) *Alex Burns 4/22/25*
+            if (
+                car.x < obs.x + obs.width &&
+                car.x + car.width > obs.x
+            ) {
+                endGameFromSuccess();
+            }
         }
         
         
@@ -253,6 +264,19 @@ function checkCollision() {
             shakeDuration = 50; //Adjust this value to control shake duration
         }
     }
+}
+
+// Spawns the Finish Line that will end the game *Alex Burns*
+function spawnFinishLine() {
+    var y = laneHeight; // third lanes
+    obstacles.push({
+        x: canvas.width, // Start just beyond the visible area
+        y: y,            // The lane's Y position
+        width: 120,       // Width of the obstacle twice the car
+        height: 240,      // Height of the obstacle covers all three lanes
+        image: finishLine, // The Finish Line
+        size: "Omega"    //Determines the size of the obstacles hitbox
+    });
 }
 
 
@@ -306,7 +330,8 @@ function startEndGameTimer() {
         if (!gamePaused && endTimeLeft <= 0) {
             // Once time has ended then spawn a finish Line that will end the game that must be
             // temporarly will end the game imeditaly
-            endGameFromSuccess();
+            spawnFinishLine();
+            clearInterval(EndGameInterval); // clears the interval ensuring another Finish line will not spawn again in normal gameplay
         }
     }, 1000); //Update every 1000ms (1 second)
 }
