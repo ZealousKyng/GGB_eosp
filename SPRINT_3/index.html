@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lane Dodge Car Game</title>
+
+  <!-- ~ Link to external CSS styling file -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <!-- Main container for the game and all UI elements -->
+  <div id="gameContainer">
+
+    <!-- ^ Canvas where the actual game is rendered -->
+    <!--   Canvas is used for a drawing surface, better for games and animations -->
+    <canvas id="gameCanvas" width="800" height="400">
+      
+      
+
+    </canvas>
+
+    <div id="startLightOverlay">Ready</div>
+
+    <div id="timerDisplay">99</div>
+    <div id="pointsDeduction"></div>
+
+    <!-- ^ Start Screen -->
+    <!--  shown when the game first loads -->
+    
+    <div id="startScreen">
+      
+      
+        <img id="gameTitleImage" src="assets/bucky_bonanza.png" alt="Lane Dodge Game">
+      
+
+      <!-- Main menu buttons: Play + Options -->
+      <div id="mainButtons">
+        <button id="startButton">Play</button>
+        <button id="optionsButton">Options</button>
+      </div>
+      
+      <img id="carImageMainMenu" src="assets/carPixel.png" alt="Car Image">
+      
+
+      
+
+      <!-- ^ Options menu -->
+      <!--  lets player customize obstacle speed and spawn timing -->
+      <div id="optionsMenu">
+        <label for="difficultySelect">Difficulty:</label>
+        <!--  drop down menu to select difficulty -->
+        <select id="difficultySelect">
+          <option value="easy">Easy</option>
+          <option value="medium" selected>Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+        <button id="applyOptionsButton">Apply</button>
+      </div>
+
+    </div>
+
+    <!-- ^ Game Over Screen -->
+    <!-- appears when the player crashes -->
+    <div id="gameOverScreen">
+      <div>Game Over!</div>
+
+      <!-- Restart lets you immediately jump back into the game -->
+      <button id="restartButton">Restart</button>
+
+      <!-- Main Menu brings you back to the start screen -->
+      <button id="mainMenuButton">Main Menu</button>
+    </div>
+
+  </div>
+
+  <!-- pause menu screen -->
+  <div id="pauseMenu">
+    <h2>Game Paused</h2>
+    <button id="resumeButton">Resume</button>
+    <button id="pauseOptionsButton">Settings</button>
+    <button id="pauseRestartButton">Restart</button>
+    <button id="pauseMainMenuButton">Main Menu</button>
+  </div>
+ <!-- not implemented yet screen Aka the setting menu -->
+  <div id="notImplementedOverlay">
+    <h2>Not Implemented Yet</h2>
+    <button id="returnToPauseButton">Return to Pause Menu</button>
+  </div>
+  
+
+  <!-- ~ External JavaScript logic (game code) -->
+  <script src="script.js"></script>
+</body>
+</html>
