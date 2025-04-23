@@ -422,6 +422,9 @@ function startGameAfterLight() {
   gameRunning = true;
   timeLeft = defaultTimer;
   endTimeLeft = defaultEndTimer;
+  timerDisplay.style.display = 'block'; // Show the timer
+  timerDisplay.style.color = 'white'; // Reset color to white
+  timerDisplay.classList.remove('grass-effect'); // Remove any grass effect
   timerDisplayUpdate();
   startTimer();
   startEndGameTimer();
@@ -454,6 +457,11 @@ function gameLoop() {
       }, 500); // 500ms interval for grass lane - Jericho McGowan 4/19/2025
       isFastTimer = true;
       timerDisplay.classList.add('grass-effect');
+      // Immediately decrease timer when entering grass lane
+      if (!gamePaused && timeLeft > 0) {
+        timeLeft--;
+        timerDisplayUpdate();
+      }
     }
   } else {
     // If in road lane and in fast mode
@@ -467,6 +475,11 @@ function gameLoop() {
       }, 1000);
       isFastTimer = false; // Reset to normal speed
       timerDisplay.classList.remove('grass-effect');
+      // Immediately update timer when leaving grass lane
+      if (!gamePaused && timeLeft > 0) {
+        timeLeft--;
+        timerDisplayUpdate();
+      }
     }
   }
 
@@ -610,6 +623,7 @@ mainMenuButton.addEventListener('click', () => {
   clearInterval(EndGameInterval); // clears the EOG timer
   timeLeft = defaultTimer; // Reset timer
   endTimeLeft = defaultEndTimer; //Reset end game timer
+  timerDisplay.style.display = 'none'; // Hide the timer
   timerDisplayUpdate(); // Update display
 
   gameOverScreen.style.display = 'none';
@@ -645,6 +659,7 @@ pauseMainMenuButton.addEventListener('click', () => {
   pauseMenu.style.display = 'none';
   startScreen.style.display = 'flex';
   mainButtons.style.display = 'flex'; //  Added this to ensure buttons show
+  timerDisplay.style.display = 'none'; // Hide the timer
 });
 
 

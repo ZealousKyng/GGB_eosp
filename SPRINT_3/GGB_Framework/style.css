@@ -41,7 +41,7 @@ body {
     color: white;   /* Sets text color to white */
     font-size: 2rem;  /* Sets a large font size */
     border-radius: 12px;    /* Rounds the corners of the start screen */
-    overflow: hidden; /* Ensures ::before doesn’t overflow the box */
+    overflow: hidden; /* Ensures ::before doesn't overflow the box */
   }  /* ^^^^^^ IF YOU REMOVE THIS IT WILL MESS UP THE BOX  */
   
   #startScreen::before {
@@ -200,19 +200,20 @@ body {
   }
 
   #timerDisplay {
-    position: absolute;   /* Allows the timer display to be positioned absolutely within the container */
-    top: 50%;   /* Centers the timer display vertically */
-    left: 50%;      /* Centers the timer display horizontally */
+    position: absolute; /* Allows the timer display to be positioned absolutely within the container */
+    top: 50%; /* Centers the timer display vertically */
+    left: 50%; /* Centers the timer display horizontally */
     transform: translate(290px, -180px); /* Offsets the timer display to center it */
     color: white; /* Sets text color to white */
-    font-size: 24px; /* Sets a large font size */
-    font-weight: bold;  /* Sets a bold font weight */
-    padding: 10px 15px;   /* Adds padding inside the timer display */
+    font-size: 24px; /* Sets a smaller font size */
+    font-weight: bold; /* Sets a bold font weight */
+    padding: 10px 15px; /* Adds padding inside the timer display */
     border-radius: 8px; /* Rounds the corners of the timer display */
-    z-index: 5;     /* Sets a high z-index to appear above other elements */
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);  /* Adds a shadow effect to the text */
-    pointer-events: none;   /* Prevents pointer events on the timer display */
-    transition: all 0.3s ease; /* Transition for the timer display  - Jericho McGowan 4/19/2025 */ 
+    z-index: 5; /* Sets a high z-index to appear above other elements */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Adds a shadow effect to the text */
+    pointer-events: none; /* Prevents pointer events on the timer display */
+    transition: all 0.3s ease; /* Smooth transition for all properties */
+    display: none; /* Hide by default */
   }
 
   /* grass-effect animation code generated with assistance from ChatGPT (OpenAI), accessed on April 19, 2025 */
