@@ -262,6 +262,7 @@ function checkCollision() {
         if (collision) {
             obstacles = obstacles.filter(o => o !== obs);
             // Trigger screen shake
+            // * - Noah
             shakeAmplitude = 50; // Adjust this value to control shake intensity
             shakeDuration = 50; //Adjust this value to control shake duration
         }
@@ -553,6 +554,24 @@ document.addEventListener('keydown', e => {
   }
   
   // Calculate new target Y position for smooth animation
+  car.targetY = laneHeight * car.lane + (laneHeight - 40) / 2;
+});
+
+// ^ Touch controls
+// * - Noah
+// Touch controls implemented to work by tapping on each "lane" to change lane car is in
+canvas.addEventListener('touchstart', e => {
+  // Get touch coordinates
+  const touch = e.touches[0]; // First touch input (tap) used only
+  const y = touch.clientY; // Vertical coordinate relative to viewport
+
+  // Determine lane based on touch position - divids touch input "y" by lane height to determine
+  let lane = Math.floor(y / laneHeight);
+
+  // Update car's lane
+  car.lane = lane;
+
+  // Calculate new Y position
   car.targetY = laneHeight * car.lane + (laneHeight - 40) / 2;
 });
 
