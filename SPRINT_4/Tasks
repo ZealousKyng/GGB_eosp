@@ -1,0 +1,26 @@
+Sprint 3 - 36 hour(s) / 19 hour(s)
+Goal: Gameplay has animations, scoring, proper phone controls, and interactive feedback
+
+1. Swipe movement / test on live server? / see how to test – Large/3 hours
+
+2. Code to affect timer when player is in grass lane – Medium/2 hours
+
+3. Implement finish line to end game – Medium/2 hours
+
+4. Animation for game start - Medium/2 hours
+
+5. Animation for screen shake – Small/1 hour
+
+6. Visual feedback for collisions/Sprites flip 90 degrees – Small/1 hour
+
+7. Implement logo to main screen – Small/1 hour 
+
+8. Move difficulty buttons to options menu/ configure buttons with their own settings – Medium with Nic/2 hours
+
+9. Implement pixel art for grass lanes/ 1 hour
+
+10. Calculate score based on time remaining and display at end of game– Medium/2 hour
+
+11. Store and display top 5 player scores using local storage or similar. (Database?) – Medium/2 hours
+
+12. New sprites ie grandma flips when hit – Optional possible sprint 4
