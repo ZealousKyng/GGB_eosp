@@ -41,6 +41,7 @@ const optionsMenu = document.getElementById('optionsMenu');   // Options menu el
 const applyOptionsButton = document.getElementById('applyOptionsButton');     // Apply button element    
 const mainButtons = document.getElementById('mainButtons');     // Main menu buttons element
 const gameOverScreen = document.getElementById('gameOverScreen');     // Game Over screen element
+const scoreDisplay = document.getElementById('score'); // Score that is displayed on the game over screen
 const restartButton = document.getElementById('restartButton');     // Restart button element
 const mainMenuButton = document.getElementById('mainMenuButton');     // Main menu button element
 const difficultySelect = document.getElementById('difficultySelect'); // Difficulty select element
@@ -62,6 +63,7 @@ document.getElementById('gameContainer').appendChild(pauseTip); // Append the pa
 
 const notImplementedOverlay = document.getElementById('notImplementedOverlay');
 const returnToPauseButton = document.getElementById('returnToPauseButton');
+
 
 // ^ Game State
 const car = {
@@ -87,7 +89,7 @@ let laneDashOffset = 0;       // Used to animate lane lines
 let timerInterval; //Timer for game timer
 let timeLeft = defaultTimer; //Time left in the game from start
 let isFastTimer = false; // Track if we are in the grass lane/fast timer mode.
-
+let endScore = 0; // Initialize score to display on the game over screen
 let EndGameInterval; // Timer til the finish Line Spawns
 let endTimeLeft = defaultEndTimer; // Time left
 
@@ -338,11 +340,14 @@ function startEndGameTimer() {
  // This Function Will end the game using the EGT
 function endGameFromSuccess(){
     if (!gameRunning) return; // Prevent multiple calls
+
     gameRunning = false;
     gamePaused = false;
     clearTimeout(obstacleTimer);
     clearInterval(timerInterval);
     clearInterval(EndGameInterval);
+    endScore = timeLeft * 10; // Calculate score based on time left
+    scoreDisplay.innerHTML = "Score: " + endScore; // Append new score to scoreDisplay
     gameOverScreen.style.display = 'flex';
 }
 
@@ -416,7 +421,7 @@ function showStartLightSequence() {
   step(); // Start sequence
 }
 
-// Simple game start fnction calls
+// Simple game start function calls
 // * - NIC
 function startGameAfterLight() {
   gameRunning = true;
@@ -602,10 +607,8 @@ restartButton.addEventListener('click', () => {
   timeLeft = defaultTimer; // Reset timer
   endTimeLeft = defaultEndTimer; //Reset End Of Game Timer
   timerDisplayUpdate(); // Update display
-
   gameOverScreen.style.display = 'none';
   gameRunning = true;
-
   startTimer(); // Start the timer
   startEndGameTimer();
   spawnObstacle();
