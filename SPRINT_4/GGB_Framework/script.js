@@ -37,6 +37,9 @@ const defaultEndTimer = 37;
 const startScreen = document.getElementById('startScreen'); // Main menu element
 const startButton = document.getElementById('startButton');   // Start button element
 const optionsButton = document.getElementById('optionsButton');   // Options button element
+const highscoresButton = document.getElementById('highscoresButton') // Highscores button element
+const highscoresList = document.getElementById('highscoresList') // Highscores display
+const backButton = document.getElementById('backButton'); // Button to go back to the main menu from the highscores list
 const optionsMenu = document.getElementById('optionsMenu');   // Options menu element
 const applyOptionsButton = document.getElementById('applyOptionsButton');     // Apply button element    
 const mainButtons = document.getElementById('mainButtons');     // Main menu buttons element
@@ -46,6 +49,7 @@ const restartButton = document.getElementById('restartButton');     // Restart b
 const mainMenuButton = document.getElementById('mainMenuButton');     // Main menu button element
 const difficultySelect = document.getElementById('difficultySelect'); // Difficulty select element
 const startLightOverlay = document.getElementById('startLightOverlay');  // Start light overlay element
+const highScores = document.getElementById('highScores'); // List of highscores to be displayed in the highscores list
 
 
 const pauseMenu = document.getElementById('pauseMenu'); // Pause menu element
@@ -92,6 +96,14 @@ let isFastTimer = false; // Track if we are in the grass lane/fast timer mode.
 let endScore = 0; // Initialize score to display on the game over screen
 let EndGameInterval; // Timer til the finish Line Spawns
 let endTimeLeft = defaultEndTimer; // Time left
+
+// Initilize highscores
+try {
+  updateScoreList();
+}
+catch (e) {
+  console.error(e);
+}
 
 
 // ! Drawing Functions -----------------------------------------------
@@ -349,6 +361,12 @@ function endGameFromSuccess(){
     clearInterval(EndGameInterval);
     endScore = timeLeft * 10; // Calculate score based on time left
     scoreDisplay.innerHTML = "Score: " + endScore; // Append new score to scoreDisplay
+    try {
+      saveScore(endScore);
+      }
+    catch (e) {
+      console.error(e);
+    }
     gameOverScreen.style.display = 'flex';
 }
 
@@ -520,6 +538,43 @@ function gameLoop() {
   requestAnimationFrame(gameLoop); // Continue the loop
 }
 
+// Gets the highscores from the local storage. Return none if error.
+function getHighScores() {
+  try{
+    let scores = JSON.parse(localStorage.getItem('localScores'));
+    // If scores == null, return an empty array
+    if (scores == null) {
+      return [];
+    }
+    return scores;
+  }
+  catch (e) {
+    console.error(e);
+    return []; // Return empty array on error
+  }
+}
+
+// Saves a new score to local storage
+function saveScore(score) {
+  let currentScores = getHighScores();
+  currentScores.push(score);
+  localStorage.setItem('localScores', JSON.stringify(currentScores)); // Save updated score list
+  updateScoreList(); // Refresh leaderboard
+}
+
+// Updates the displayed list of scores
+function updateScoreList() {
+  let scores = getHighScores();
+  scores.sort((a,b) => b - a); // Sort scores by highest first
+  scores = scores.slice(0, 5); // Limit to 5 scores
+  let stringBuild = "";
+  for (let i = 0; i < scores.length; i++) {
+    stringBuild += (i + 1) + ". " + scores[i] + "<br>";
+  }
+  highScores.innerHTML = stringBuild;
+}
+
+
 // ! Input Handling --------------------------------------------
 
 // ^ Handle W/S key presses for lane switching and pauseing game 
@@ -588,6 +643,19 @@ startButton.addEventListener('click', () => {
 optionsButton.addEventListener('click', () => {
   mainButtons.style.display = 'none';
   optionsMenu.style.display = 'flex';
+});
+
+// ^ Show highscores list
+highscoresButton.addEventListener('click', () => {
+  mainButtons.style.display = 'none';
+  highscoresList.style.display = 'flex';
+});
+
+// ^ Go back to main menu from highscores list
+backButton.addEventListener('click', () => {
+  highscoresList.style.display = 'none';
+  startScreen.style.display = 'flex'; //  Show main menu
+  mainButtons.style.display = 'flex'; // Show main buttons
 });
 
 // ^ Apply selected options

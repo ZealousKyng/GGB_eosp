@@ -69,12 +69,13 @@ body {
     display: flex;  /* Enables flexbox layout */
     flex-direction: column;     /* Arranges buttons in a column */
     align-items: center;  /* Centers buttons horizontally */
-    gap: 12px;    /* Adds space between buttons */
   }
   
   #startButton, /* Start button */
   #difficultyButton,  /* Difficulty button */
-  #optionsButton, /* Options button */  
+  #optionsButton, /* Options button */
+  #highscoresButton, /* Highscores button */
+  #backButton, /* Back button for the highscores menu */
   #applyOptionsButton {  /* Apply options button */
     margin-top: 20px;   /* Adds space above the button */
     padding: 10px 20px; /* Adds padding inside the button */
@@ -298,6 +299,16 @@ body {
     width: 60px;    /* Sets a fixed width for the car image */
     height: 40px;     /* Sets a fixed height for the car image */
     z-index: 11; /* Higher than the start screen's z-index of 10 */
+  }
+
+  #highscoresList { /* High score list in the main menu */
+    display: none; /* Hides the highscores menu */
+    flex-direction: column; /* Aligns div items as a column */
+  }
+
+  #highScores {
+    align-items: center;
+    font-size: medium;
   }
 
   #difficultySelect {     /* Difficulty select dropdown */
