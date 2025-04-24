@@ -1,26 +1,37 @@
-Sprint 3 - 36 hour(s) / 19 hour(s)
-Goal: Gameplay has animations, scoring, proper phone controls, and interactive feedback
+Sprint 4 - 36 hour(s) / 23 hour(s)
 
-1. Swipe movement / test on live server? / see how to test – Large/3 hours
+Goal: A fully playable, visually polished version of the game with additional quality-of-life features
 
-2. Code to affect timer when player is in grass lane – Medium/2 hours
+a.	BUG collab with b - Finish line issues – If you pause the game before the finish line and go to main menu and restart game again it ends with max points – 1 hour
 
-3. Implement finish line to end game – Medium/2 hours
+b.	BUG collab with a - After you pass the finish line and go to the main menu and restart it shows you passed and resets - 1 hour
 
-4. Animation for game start - Medium/2 hours
+c.	Game speed between easy and medium needs to be adjusted - 1 hour
 
-5. Animation for screen shake – Small/1 hour
+d.	Need to be able to cross finish line then game ends - 1 hour
 
-6. Visual feedback for collisions/Sprites flip 90 degrees – Small/1 hour
+e.	BUG - Car does not restart in middle lane before game starts - 1 hour
 
-7. Implement logo to main screen – Small/1 hour 
+f.	*Finish Top 5 scores – Yes* - 1 hour
 
-8. Move difficulty buttons to options menu/ configure buttons with their own settings – Medium with Nic/2 hours
+g.	Add scoreboard button and implement scoreboard – 2 hours
 
-9. Implement pixel art for grass lanes/ 1 hour
+h.	Different car designs– 1 hour
 
-10. Calculate score based on time remaining and display at end of game– Medium/2 hour
+i.	Implement code to allow car change will go in the options menu – 2 hours
 
-11. Store and display top 5 player scores using local storage or similar. (Database?) – Medium/2 hours
+j.	Button to open settings for mobile – 1 hour
 
-12. New sprites ie grandma flips when hit – Optional possible sprint 4
+k.	Implement sprites for after collision – 2 hours
+
+l.	Test UI responsiveness and elements behavior - 1 hour
+
+m.	All visuals and animations are smooth and intentional - 1 hour
+
+n.	All menus function correctly - 1 hour
+
+o.	Game ends cleanly with clear win/loss state – 1 hour
+
+p.	Perform internal playtesting to check for BUGS- 1 hour
+
+q.	Not one person - Code Review – 4 hours
