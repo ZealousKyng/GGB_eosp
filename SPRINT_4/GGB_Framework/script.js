@@ -258,7 +258,7 @@ function checkCollision() {
                 car.y + car.height > obs.y
             ) {
                 collision = true;
-                deductTime(2); // 2 second deduction
+                deductTime(3); // 3 second deduction Altered to make the game harder (2 was too small) *Change Made By Alex Burns 4/26/25*
             }
         } else if (obs.size == "Omega") { //This is exclusively is used by the Finish Line (no height check to ensure cant "Dodge" the line) *Alex Burns 4/22/25*
             if (
@@ -664,14 +664,14 @@ applyOptionsButton.addEventListener('click', () => {
   const selectedDifficulty = difficultySelect.value;
 
   //Presets for difficulty level
-  if (selectedDifficulty === 'easy') {
-    obstacleSpeed = 3;
-    spawnDelayMin = 1500;
-    spawnDelayMax = 3000;
-  } else if (selectedDifficulty === 'medium') {
-    obstacleSpeed = 5;
+  if (selectedDifficulty === 'easy') { //adjusted Difficluty levels to be consitiant, harder, and the speed faster *edited by Alex Burns 4/26/25*
+    obstacleSpeed = 4;
     spawnDelayMin = 800;
     spawnDelayMax = 2000;
+  } else if (selectedDifficulty === 'medium') {
+    obstacleSpeed = 6;
+    spawnDelayMin = 600;
+    spawnDelayMax = 1600;
   } else if (selectedDifficulty === 'hard') {
     obstacleSpeed = 8;
     spawnDelayMin = 400;
