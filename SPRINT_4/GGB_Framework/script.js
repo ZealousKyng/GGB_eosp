@@ -528,8 +528,8 @@ function gameLoop() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.translate(offsetX, offsetY); // Apply shake effect
   drawLanes();
-  drawCar();
   drawObstacles();
+  drawCar();
   updateObstacles();
   checkCollision();
   ctx.resetTransform(); //Reset transform for shake effect
