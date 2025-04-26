@@ -262,8 +262,8 @@ function checkCollision() {
             }
         } else if (obs.size == "Omega") { //This is exclusively is used by the Finish Line (no height check to ensure cant "Dodge" the line) *Alex Burns 4/22/25*
             if (
-                car.x < obs.x + obs.width &&
-                car.x + car.width > obs.x
+                car.x < obs.x + obs.width && 
+                car.x + car.width > obs.x + obs.width  // Updated collision so the game ends when the car crosses the line *Adjusted by Alex Burns 4/26/25*
             ) {
                 endGameFromSuccess();
             }
