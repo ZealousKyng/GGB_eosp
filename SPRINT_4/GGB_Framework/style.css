@@ -42,7 +42,7 @@ body {
     font-size: 2rem;  /* Sets a large font size */
     border-radius: 12px;    /* Rounds the corners of the start screen */
     overflow: hidden; /* Ensures ::before doesn't overflow the box */
-  }  /* ^^^^^^ IF YOU REMOVE THIS IT WILL MESS UP THE BOX  */
+  }  /* ^^^^^^ IF YOU REMOVE THIS IT WILL MESS UP THE black overlay  */
   
   #startScreen::before {
     content: ""; /* Required for pseudo-element */
@@ -55,11 +55,11 @@ body {
     z-index: -1;  /* Sets a low z-index to appear behind other elements */
     border-radius: 12px;   /* Rounds the corners of the pseudo-element */ 
   }
-
+  /* created by jackson kraus on 4/20/2025 */
   #gameTitleImage {
     width: 200px;         /* 50% of the 800px menu width for proper scale */
     height: 200px;         /* Maintains the correct aspect ratio */
-    margin-bottom: 10px; /* Adds space below the image */
+    margin-bottom: 2px; /* Adds space below the image */
     display: inline-block;;       /* Ensures proper centering */
     filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3)); /* Optional: adds subtle glow */
   }
@@ -333,8 +333,30 @@ body {
     text-shadow: 2px 2px 6px rgba(0,0,0,0.6);     /* Adds a shadow effect to the text */
     transition: all 0.3s ease;  
   }
-
+  /* Pause button styles */
+  /* jackson kraus - 4/27/2025 */
+  #pauseButton {
+    position: absolute;
+    top: 33%; /* Align vertically with timer */
+    left: calc(50% + 12%); /* Position to the right of timer - adjust percentage as needed */
+    transform: translateY(-50%); /* Center vertically */
+    background-color:white; /* Background color */
+    color: black; /* Text color */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 5px 10px; /* Padding inside the button */
+    font-size: 16px; /* Font size */
+    cursor: pointer;  /* Pointer cursor on hover */
+    display: none; /* Hidden by default */
+    z-index: 100;   /* Ensure it's above other elements */ 
+    font-weight: bold; /* Bold text */
+    
+  }
   
+  .timer-container:hover #timerDisplay,  /* Show timer on hover */
+  .timer-container:hover #pauseButton { /* Show pause button on hover */
+    display: block; /* Show the timer and pause button */
+  }
   
   
   
