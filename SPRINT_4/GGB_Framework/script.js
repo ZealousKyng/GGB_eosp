@@ -52,17 +52,19 @@ const startLightOverlay = document.getElementById('startLightOverlay');  // Star
 const highScores = document.getElementById('highScores'); // List of highscores to be displayed in the highscores list
 
 
+//pause menu button event listeners created by Jackson kraus 4/10/2025 
+const pauseButton = document.getElementById('pauseButton'); // Pause button that displays in game
 const pauseMenu = document.getElementById('pauseMenu'); // Pause menu element
 const resumeButton = document.getElementById('resumeButton'); // Resume button element
 const pauseOptionsButton = document.getElementById('pauseOptionsButton'); // Options button in pause menu
 const pauseMainMenuButton = document.getElementById('pauseMainMenuButton'); // Main menu button in pause menu
 const pauseRestartButton = document.getElementById('pauseRestartButton'); // Restart button in pause menu
-
+//-------------------------------------------------------
 const timerDisplay = document.getElementById('timerDisplay'); // Timer display element
 
 const pauseTip = document.createElement('div'); // Create a new div for the pause tip
 pauseTip.className = 'pause-tip'; // Add a class for styling
-pauseTip.textContent = 'Press ESC to pause the game'; // Set the text content
+
 document.getElementById('gameContainer').appendChild(pauseTip); // Append the pause tip to the game container
 
 const notImplementedOverlay = document.getElementById('notImplementedOverlay');
@@ -315,6 +317,7 @@ function endGameForTimer() {
   if (!gameRunning) return; // Prevent multiple calls
   gameRunning = false;
   gamePaused = false;
+  pauseButton.style.display = 'none'; // Hide the pause button
   clearTimeout(obstacleTimer);
   clearInterval(timerInterval); 
   clearInterval(EndGameInterval);
@@ -356,6 +359,7 @@ function endGameFromSuccess(){
 
     gameRunning = false;
     gamePaused = false;
+    pauseButton.style.display = 'none'; // Hide the pause button
     clearTimeout(obstacleTimer);
     clearInterval(timerInterval);
     clearInterval(EndGameInterval);
@@ -447,6 +451,7 @@ function startGameAfterLight() {
   timeLeft = defaultTimer;
   endTimeLeft = defaultEndTimer;
   timerDisplay.style.display = 'block'; // Show the timer
+  pauseButton.style.display = 'block' ; // Show the pause button
   timerDisplay.style.color = 'white'; // Reset color to white
   timerDisplay.classList.remove('grass-effect'); // Remove any grass effect
   timerDisplayUpdate();
@@ -581,12 +586,12 @@ function updateScoreList() {
 
 // Enhanced keyboard input handler with support for both WASD and arrow keys
 document.addEventListener('keydown', e => {
-  // Handle pause/resume with Escape key
+  // Handle pause/resume with Escape key created by Jackson Kraus 4/10/2025
   if (e.key === 'Escape' && gameRunning) {
     if (inPauseSettings) {
       return; // Ignore Escape key press
     }
-    if (gamePaused) { // Resume the game
+    if (gamePaused) { // Resume the game 
       resumeGame();
     } else { // Pause the game
       pauseGame();
@@ -639,7 +644,7 @@ startButton.addEventListener('click', () => {
   //Moved all the other functions to the StartLightSequence 
 });
 
-// ^ Show options menu
+// ^ Show options menu  
 optionsButton.addEventListener('click', () => {
   mainButtons.style.display = 'none';
   optionsMenu.style.display = 'flex';
@@ -695,11 +700,20 @@ restartButton.addEventListener('click', () => {
   endTimeLeft = defaultEndTimer; //Reset End Of Game Timer
   timerDisplayUpdate(); // Update display
   gameOverScreen.style.display = 'none';
+  pauseButton.style.display = 'block'; // Show the pause button
+  pauseButton.textContent = "Pause"; // Reset button text
   gameRunning = true;
   startTimer(); // Start the timer
   startEndGameTimer();
   spawnObstacle();
   gameLoop();
+});
+ // Pause the game from the game screen
+ // created by Jackson Kraus 4/27/2025
+pauseButton.addEventListener('click', () => {
+  if (gameRunning && !gamePaused) {
+    pauseGame();
+  }
 });
 
 // ^ Go back to main menu from Game Over screen
@@ -714,6 +728,7 @@ mainMenuButton.addEventListener('click', () => {
   timeLeft = defaultTimer; // Reset timer
   endTimeLeft = defaultEndTimer; //Reset end game timer
   timerDisplay.style.display = 'none'; // Hide the timer
+  pauseButton.style.display = 'none'; // Hide the pause button
   timerDisplayUpdate(); // Update display
 
   gameOverScreen.style.display = 'none';
@@ -727,16 +742,20 @@ function pauseGame() {
   clearTimeout(obstacleTimer); // Stop spawning obstacles
   pauseTimer(); // Pause the timer
   pauseMenu.style.display = 'flex';
+  pauseButton.style.display = 'none'; // Hide the pause button
+    
 }
 // ^ Resume the game from the pause menu
 function resumeGame() {
   if (!gamePaused) return;
   
   pauseMenu.style.display = 'none';
+  pauseButton.style.display = 'block'; // Show the pause button
   gamePaused = false;
   spawnObstacle(); // Restart obstacle spawning
   resumeTimer(); // Resume the timer
   requestAnimationFrame(gameLoop); // Restart the game loop
+  pauseButton.textContent = "Pause"; //change the pause button back to pause
 }
 
 
@@ -744,17 +763,18 @@ function resumeGame() {
 resumeButton.addEventListener('click', resumeGame);
 
 pauseMainMenuButton.addEventListener('click', () => {
-  gamePaused = false;
-  gameRunning = false;
-  pauseMenu.style.display = 'none';
-  startScreen.style.display = 'flex';
+  gamePaused = false; // Reset pause state
+  gameRunning = false; // Stop the game loop
+  pauseMenu.style.display = 'none';// Hide the pause menu
+  pauseButton.style.display = 'none';// Hide the pause button
+  startScreen.style.display = 'flex'; // Show the main menu
   mainButtons.style.display = 'flex'; //  Added this to ensure buttons show
   timerDisplay.style.display = 'none'; // Hide the timer
 });
 
 
 //  event listener for restart button in pause menu
-pauseRestartButton.addEventListener('click', () => {
+pauseRestartButton.addEventListener('click', () => { //created by Jackson Kraus 4/10/2025
   // Reset game state
   obstacles = [];
   car.lane = 2;
@@ -767,6 +787,9 @@ pauseRestartButton.addEventListener('click', () => {
   // Reset pause state
   gamePaused = false;
   
+  pauseButton.style.display = 'block';
+  pauseButton.textContent = "Pause";
+
   // Start game fresh
   gameRunning = true;
   timeLeft = defaultTimer;
@@ -779,13 +802,15 @@ pauseRestartButton.addEventListener('click', () => {
 });
 
 // ^ Not implemented overlay button event listener this is just a placeholder for now and is for the settings menu
+// created by Jackson Kraus 4/10/2025
 pauseOptionsButton.addEventListener('click', () => {
   pauseMenu.style.display = 'none';
-  notImplementedOverlay.style.display = 'flex';
+  notImplementedOverlay.style.display = 'flex';  
   inPauseSettings = true; // Set the flag to indicate we're in pause settings
 });
 
 // Add click event for return to pause menu button
+// created by Jackson Kraus 4/10/2025
 returnToPauseButton.addEventListener('click', () => {
   notImplementedOverlay.style.display = 'none';
   pauseMenu.style.display = 'flex';
