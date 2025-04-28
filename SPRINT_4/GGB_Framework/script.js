@@ -11,6 +11,12 @@ const laneHeight = canvas.height / numberOfLanes;
 const carImage = new Image();
 carImage.src = 'assets/carPixel.png'; // ~ Link to car png
 
+const f150Image = new Image();
+f150Image.src = 'assets/bucky-f-150-pixilart.png'; // New F-150 truck
+
+// NEW - track the selected car image
+let selectedCarImage = carImage; // Start with the default car
+
 // Finish Line image
 const finishLine = new Image();
 finishLine.src = 'assets/FinishLine.png'; // ~ Link to Finish Line
@@ -160,12 +166,11 @@ function drawLanes() {
 
 // ^ Draws the car (image version)
 function drawCar() {
-  if (carImage.complete) {
-    ctx.drawImage(carImage, car.x + 40, car.y, car.width, car.height); // plus 90 to shift forward
+  if (selectedCarImage.complete) {
+    ctx.drawImage(selectedCarImage, car.x + 40, car.y, car.width, car.height);
   } else {
-    // Wait for the image to load before drawing
-    carImage.onload = () => {
-      ctx.drawImage(carImage, car.x + 40, car.y, car.width, car.height);
+    selectedCarImage.onload = () => {
+      ctx.drawImage(selectedCarImage, car.x + 40, car.y, car.width, car.height);
     };
   }
 }
@@ -769,6 +774,15 @@ applyOptionsButton.addEventListener('click', () => {
     obstacleSpeed = 8;
     spawnDelayMin = 400;
     spawnDelayMax = 1200;
+  }
+
+  // Handle Car Selection
+  const selectedCarValue = document.querySelector('input[name="carChoice"]:checked').value;
+
+  if (selectedCarValue === 'carPixel') {
+    selectedCarImage = carImage;
+  } else if (selectedCarValue === 'f150') {
+    selectedCarImage = f150Image;
   }
 
   optionsMenu.style.display = 'none';
