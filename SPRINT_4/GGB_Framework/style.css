@@ -199,7 +199,7 @@ body {
     font-size: 14px;  /* Sets a smaller font size */
     opacity: 0.7;     /* Sets a lower opacity for the tip */
   }
-
+  
   #timerDisplay {
     position: absolute; /* Allows the timer display to be positioned absolutely within the container */
     top: 50%; /* Centers the timer display vertically */
@@ -216,7 +216,7 @@ body {
     transition: all 0.3s ease; /* Smooth transition for all properties */
     display: none; /* Hide by default */
   }
-
+  
   /* grass-effect animation code generated with assistance from ChatGPT (OpenAI), accessed on April 19, 2025 */
   #timerDisplay.grass-effect { /* Grass effect for the timer display - Jericho McGowan 4/19/2025 */ 
     animation: grassPulse 1s infinite; /* Applies the grass pulse animation */
@@ -336,9 +336,9 @@ body {
   /* Pause button styles */
   /* jackson kraus - 4/27/2025 */
   #pauseButton {
-    position: absolute;
-    top: 33%; /* Align vertically with timer */
-    left: calc(50% + 12%); /* Position to the right of timer - adjust percentage as needed */
+    position: relative; /* Allows the button to be positioned relative to its parent */
+    top: 27.5%; /* Align vertically with timer */
+    left: 40%; /* Position to the right of timer - adjust percentage as needed */
     transform: translateY(-50%); /* Center vertically */
     background-color:white; /* Background color */
     color: black; /* Text color */
@@ -352,7 +352,65 @@ body {
     font-weight: bold; /* Bold text */
     
   }
-  
+  /* Small devices (phones, less than 600px) */
+  @media (max-width: 600px) {
+    #pauseButton {
+      position: relative; /* Allows the button to be positioned relative to its parent */
+      top: 27.5%; /* Align vertically with timer */
+      left: 60%; /* Position to the right of timer - adjust percentage as needed */
+      transform: translateY(60%); /* Center vertically */
+      background-color:white; /* Background color */
+      color: black; /* Text color */
+      border: none; /* No border */
+      border-radius: 5px; /* Rounded corners */
+      padding: 5px 10px; /* Padding inside the button */
+      font-size: 16px; /* Font size */
+      cursor: pointer;  /* Pointer cursor on hover */
+      display: none; /* Hidden by default */
+      z-index: 100;   /* Ensure it's above other elements */ 
+      font-weight: bold; /* Bold text */
+    }
+  }
+
+  /* Medium devices (tablets, 600px to 900px) */
+  @media (min-width: 601px) and (max-width: 900px) {
+    #pauseButton {
+      position: relative; /* Allows the button to be positioned relative to its parent */
+      top: 27.5%; /* Align vertically with timer */
+      left: 70%; /* Position to the right of timer - adjust percentage as needed */
+      transform: translateY(400%); /* Center vertically */
+      background-color:white; /* Background color */
+      color: black; /* Text color */
+      border: none; /* No border */
+      border-radius: 5px; /* Rounded corners */
+      padding: 5px 10px; /* Padding inside the button */
+      font-size: 16px; /* Font size */
+      cursor: pointer;  /* Pointer cursor on hover */
+      display: none; /* Hidden by default */
+      z-index: 100;   /* Ensure it's above other elements */ 
+      font-weight: bold; /* Bold text */
+    }
+  }
+
+  /* Large devices (desktops, 901px and up) */
+  @media (min-width: 901px) {
+    #pauseButton {
+      position: relative; /* Allows the button to be positioned relative to its parent */
+      top: 27.5%; /* Align vertically with timer */
+      left: 40%; /* Position to the right of timer - adjust percentage as needed */
+      transform: translateY(-50%); /* Center vertically */
+      background-color:white; /* Background color */
+      color: black; /* Text color */
+      border: none; /* No border */
+      border-radius: 5px; /* Rounded corners */
+      padding: 5px 10px; /* Padding inside the button */
+      font-size: 16px; /* Font size */
+      cursor: pointer;  /* Pointer cursor on hover */
+      display: none; /* Hidden by default */
+      z-index: 100;   /* Ensure it's above other elements */ 
+      font-weight: bold; /* Bold text */
+    }
+  }
   .timer-container:hover #timerDisplay,  /* Show timer on hover */
   .timer-container:hover #pauseButton { /* Show pause button on hover */
     display: block; /* Show the timer and pause button */
