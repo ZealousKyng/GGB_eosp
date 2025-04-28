@@ -872,6 +872,9 @@ pauseMainMenuButton.addEventListener('click', () => {
   startScreen.style.display = 'flex'; // Show the main menu
   mainButtons.style.display = 'flex'; //  Added this to ensure buttons show
   timerDisplay.style.display = 'none'; // Hide the timer
+
+  // Clears finish line object when returning to main menu from pause menu - Noah - 04/28/2025
+  obstacles = obstacles.filter(obs => obs.size !== "Omega");
 });
 
 
