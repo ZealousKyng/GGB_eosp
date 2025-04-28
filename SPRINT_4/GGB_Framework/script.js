@@ -17,6 +17,11 @@ f150Image.src = 'assets/bucky-f-150-pixilart.png'; // New F-150 truck
 // NEW - track the selected car image
 let selectedCarImage = carImage; // Start with the default car
 
+//Grass image
+const grassImage = new Image();
+grassImage.src = 'assets/Pixelgrass.png'; // Your grass art
+
+
 // Finish Line image
 const finishLine = new Image();
 finishLine.src = 'assets/FinishLine.png'; // ~ Link to Finish Line
@@ -241,72 +246,31 @@ function spawnObstacle() {
     // This keeps the game unpredictable and dynamic
     const nextSpawnDelay = spawnDelayMin + Math.random() * (spawnDelayMax - spawnDelayMin);
     obstacleTimer = setTimeout(spawnObstacle, nextSpawnDelay);
+
+    // Maybe spawn a decorative grass object
+    if (Math.random() < 0.7) { // 70% chance - tweak this number for more or less
+      const grassLane = Math.random() < 0.5 ? 0 : 4; // Top lane (0) or Bottom lane (4)
+      const y = grassLane * laneHeight + (laneHeight - 40) / 2; // Center it in the lane
+
+      obstacles.push({
+        x: canvas.width,
+        y: y,
+        width: 60, // Or whatever fits the image
+        height: 40,
+        image: grassImage,
+        type: "grass",
+        size: "Decorative", // New special type
+        collidable: false // NOT collidable - won't deduct time
+      });
+}
 }
 
 // ^ Detects collisions between the car and obstacles
-// function checkCollision() {
-//     for (let obs of obstacles) {
-//         let collision = false;
-        
-//         if (obs.size == "Large") {
-//             if (
-//                 car.x < obs.x + obs.width &&
-//                 car.x + car.width > obs.x &&
-//                 car.y < obs.y + obs.height &&
-//                 car.y + car.height > obs.y
-//             ) {
-//                 collision = true;
-//                 deductTime(6); // 6 second deduction
-//             }
-
-//         } else if (obs.size == "Medimum") {
-//             if (
-//                 car.x < obs.x + obs.width &&
-//                 car.x + car.width - 15 > obs.x &&
-//                 car.y < obs.y + obs.height &&
-//                 car.y + car.height > obs.y
-//             ) {
-//                 collision = true;
-//                 deductTime(4); // 4 second deduction
-//             }
-//         } else if (obs.size == "Small") {
-//             if (
-//                 car.x < obs.x + obs.width &&
-//                 car.x + car.width - 25 > obs.x &&
-//                 car.y < obs.y + obs.height &&
-//                 car.y + car.height > obs.y
-//             ) {
-//                 collision = true;
-//                 deductTime(3); // 3 second deduction Altered to make the game harder (2 was too small) *Change Made By Alex Burns 4/26/25*
-//             }
-//         } else if (obs.size == "Omega") { //This is exclusively is used by the Finish Line (no height check to ensure cant "Dodge" the line) *Alex Burns 4/22/25*
-//             if (
-//                 car.x < obs.x + obs.width && 
-//                 car.x + car.width > obs.x + obs.width  // Updated collision so the game ends when the car crosses the line *Adjusted by Alex Burns 4/26/25*
-//             ) {
-//                 endGameFromSuccess();
-//             }
-//         }
-        
-        
-//         // Remove object if collision occurs.
-//         if (collision) {
-//           if (crushedObstacleImages[obs.type]) {
-//                 const crushedImg = new Image();
-//                 crushedImg.src = crushedObstacleImages[obs.type];
-//                 obs.image = crushedImg; // Swap to crushed image
-//                 obs.isCrushed = true;
-//             } else {
-//                 obstacles = obstacles.filter(o => o !== obs); // Only remove if not crushable
-//             }
-//             shakeAmplitude = 50; // Adjust this value to control shake intensity
-//             shakeDuration = 50; //Adjust this value to control shake duration
-//         }
-//     }
-// }
 function checkCollision() {
   for (let obs of obstacles) {
     if (!obs.collidable) continue;
+    if (obs.size === "Decorative") continue; // Skip decorative objects
+
       let collision = false;
       
       if (obs.size == "Large") {
