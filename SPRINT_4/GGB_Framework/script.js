@@ -15,6 +15,16 @@ carImage.src = 'assets/carPixel.png'; // ~ Link to car png
 const finishLine = new Image();
 finishLine.src = 'assets/FinishLine.png'; // ~ Link to Finish Line
 
+// & Crushed Obstacle Images
+const crushedObstacleImages = {
+  'bananas': 'assets/crushedbananas.png',
+  'cone': 'assets/crushedCone.png',
+  'grandma': 'assets/crushedGrandma.png',
+  'stopSign': 'assets/crushedStopSign.png',
+  'warningSign': 'assets/crushedWarningSign.png'
+};
+
+
 // & Obstacle images (randomized per obstacle)
 const obstacleImages = 
 [
@@ -151,11 +161,11 @@ function drawLanes() {
 // ^ Draws the car (image version)
 function drawCar() {
   if (carImage.complete) {
-    ctx.drawImage(carImage, car.x, car.y, car.width, car.height);
+    ctx.drawImage(carImage, car.x + 40, car.y, car.width, car.height); // plus 90 to shift forward
   } else {
     // Wait for the image to load before drawing
     carImage.onload = () => {
-      ctx.drawImage(carImage, car.x, car.y, car.width, car.height);
+      ctx.drawImage(carImage, car.x + 40, car.y, car.width, car.height);
     };
   }
 }
@@ -217,7 +227,9 @@ function spawnObstacle() {
       width: 60,       // Width of the obstacle (same as car)
       height: 40,      // Height of the obstacle (same as car)
       image: randomImage, // One of the 5 obstacle images
-      size: Size    //Determines the size of the obstacles hitbox
+      type: obstacleImages[ImageRNG].src.split('/').pop().replace('.png', ''), // 
+      size: Size,    //Determines the size of the obstacles hitbox
+      collidable: true
     });
   
     // & Schedule the next obstacle spawn using a random delay between min and max
@@ -227,61 +239,129 @@ function spawnObstacle() {
 }
 
 // ^ Detects collisions between the car and obstacles
-function checkCollision() {
-    for (let obs of obstacles) {
-        let collision = false;
+// function checkCollision() {
+//     for (let obs of obstacles) {
+//         let collision = false;
         
-        if (obs.size == "Large") {
-            if (
-                car.x < obs.x + obs.width &&
-                car.x + car.width > obs.x &&
-                car.y < obs.y + obs.height &&
-                car.y + car.height > obs.y
-            ) {
-                collision = true;
-                deductTime(6); // 6 second deduction
-            }
+//         if (obs.size == "Large") {
+//             if (
+//                 car.x < obs.x + obs.width &&
+//                 car.x + car.width > obs.x &&
+//                 car.y < obs.y + obs.height &&
+//                 car.y + car.height > obs.y
+//             ) {
+//                 collision = true;
+//                 deductTime(6); // 6 second deduction
+//             }
 
-        } else if (obs.size == "Medimum") {
-            if (
-                car.x < obs.x + obs.width &&
-                car.x + car.width - 15 > obs.x &&
-                car.y < obs.y + obs.height &&
-                car.y + car.height > obs.y
-            ) {
-                collision = true;
-                deductTime(4); // 4 second deduction
-            }
-        } else if (obs.size == "Small") {
-            if (
-                car.x < obs.x + obs.width &&
-                car.x + car.width - 25 > obs.x &&
-                car.y < obs.y + obs.height &&
-                car.y + car.height > obs.y
-            ) {
-                collision = true;
-                deductTime(3); // 3 second deduction Altered to make the game harder (2 was too small) *Change Made By Alex Burns 4/26/25*
-            }
-        } else if (obs.size == "Omega") { //This is exclusively is used by the Finish Line (no height check to ensure cant "Dodge" the line) *Alex Burns 4/22/25*
-            if (
-                car.x < obs.x + obs.width && 
-                car.x + car.width > obs.x + obs.width  // Updated collision so the game ends when the car crosses the line *Adjusted by Alex Burns 4/26/25*
-            ) {
-                endGameFromSuccess();
-            }
-        }
+//         } else if (obs.size == "Medimum") {
+//             if (
+//                 car.x < obs.x + obs.width &&
+//                 car.x + car.width - 15 > obs.x &&
+//                 car.y < obs.y + obs.height &&
+//                 car.y + car.height > obs.y
+//             ) {
+//                 collision = true;
+//                 deductTime(4); // 4 second deduction
+//             }
+//         } else if (obs.size == "Small") {
+//             if (
+//                 car.x < obs.x + obs.width &&
+//                 car.x + car.width - 25 > obs.x &&
+//                 car.y < obs.y + obs.height &&
+//                 car.y + car.height > obs.y
+//             ) {
+//                 collision = true;
+//                 deductTime(3); // 3 second deduction Altered to make the game harder (2 was too small) *Change Made By Alex Burns 4/26/25*
+//             }
+//         } else if (obs.size == "Omega") { //This is exclusively is used by the Finish Line (no height check to ensure cant "Dodge" the line) *Alex Burns 4/22/25*
+//             if (
+//                 car.x < obs.x + obs.width && 
+//                 car.x + car.width > obs.x + obs.width  // Updated collision so the game ends when the car crosses the line *Adjusted by Alex Burns 4/26/25*
+//             ) {
+//                 endGameFromSuccess();
+//             }
+//         }
         
         
-        // Remove object if collision occurs.
-        if (collision) {
-            obstacles = obstacles.filter(o => o !== obs);
-            // Trigger screen shake
-            // * - Noah
-            shakeAmplitude = 50; // Adjust this value to control shake intensity
-            shakeDuration = 50; //Adjust this value to control shake duration
-        }
-    }
+//         // Remove object if collision occurs.
+//         if (collision) {
+//           if (crushedObstacleImages[obs.type]) {
+//                 const crushedImg = new Image();
+//                 crushedImg.src = crushedObstacleImages[obs.type];
+//                 obs.image = crushedImg; // Swap to crushed image
+//                 obs.isCrushed = true;
+//             } else {
+//                 obstacles = obstacles.filter(o => o !== obs); // Only remove if not crushable
+//             }
+//             shakeAmplitude = 50; // Adjust this value to control shake intensity
+//             shakeDuration = 50; //Adjust this value to control shake duration
+//         }
+//     }
+// }
+function checkCollision() {
+  for (let obs of obstacles) {
+    if (!obs.collidable) continue;
+      let collision = false;
+      
+      if (obs.size == "Large") {
+          if (
+              car.x < obs.x + obs.width &&
+              car.x + car.width > obs.x &&
+              car.y < obs.y + obs.height &&
+              car.y + car.height > obs.y
+          ) {
+              collision = true;
+              deductTime(6); // 6 second deduction
+          }
+
+      } else if (obs.size == "Medimum") {
+          if (
+              car.x < obs.x + obs.width &&
+              car.x + car.width - 15 > obs.x &&
+              car.y < obs.y + obs.height &&
+              car.y + car.height > obs.y
+          ) {
+              collision = true;
+              deductTime(4); // 4 second deduction
+          }
+      } else if (obs.size == "Small") {
+          if (
+              car.x < obs.x + obs.width &&
+              car.x + car.width - 25 > obs.x &&
+              car.y < obs.y + obs.height &&
+              car.y + car.height > obs.y
+          ) {
+              collision = true;
+              deductTime(3); // 3 second deduction Altered to make the game harder (2 was too small) *Change Made By Alex Burns 4/26/25*
+          }
+      } else if (obs.size == "Omega") { //This is exclusively is used by the Finish Line (no height check to ensure cant "Dodge" the line) *Alex Burns 4/22/25*
+          if (
+              car.x < obs.x + obs.width && 
+              car.x + car.width > obs.x + obs.width // Updated collision so the game ends when the car crosses the line *Adjusted by Alex Burns 4/26/25*
+          ) {
+              endGameFromSuccess();
+          }
+      }
+      
+      // Handle collision
+      if (collision) {
+          if (crushedObstacleImages[obs.type]) {
+              const crushedImg = new Image();
+              crushedImg.src = crushedObstacleImages[obs.type];
+              obs.image = crushedImg; // Swap to crushed image
+              obs.isCrushed = true;
+              obs.collidable = false; 
+          } else {
+              obstacles = obstacles.filter(o => o !== obs); // Only remove if not crushable
+          }
+          shakeAmplitude = 30; // Adjust this value to control shake intensity
+          shakeDuration = 30; //Adjust this value to control shake duration
+          break; 
+      }
+  }
 }
+
 
 // Spawns the Finish Line that will end the game *Alex Burns*
 function spawnFinishLine() {
@@ -292,7 +372,8 @@ function spawnFinishLine() {
         width: 120,       // Width of the obstacle twice the car
         height: 240,      // Height of the obstacle covers all three lanes
         image: finishLine, // The Finish Line
-        size: "Omega"    //Determines the size of the obstacles hitbox
+        size: "Omega",   //Determines the size of the obstacles hitbox
+        collidable: true
     });
 }
 
@@ -670,7 +751,7 @@ applyOptionsButton.addEventListener('click', () => {
 
   //Presets for difficulty level
   if (selectedDifficulty === 'easy') { //adjusted Difficluty levels to be consitiant, harder, and the speed faster *edited by Alex Burns 4/26/25*
-    obstacleSpeed = 4;
+    obstacleSpeed = 2;
     spawnDelayMin = 800;
     spawnDelayMax = 2000;
   } else if (selectedDifficulty === 'medium') {
